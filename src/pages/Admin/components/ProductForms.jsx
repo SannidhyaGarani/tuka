@@ -158,7 +158,7 @@ export const ProductForm = ({ onSuccess }) => {
           <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Sub-category</label>
           <input
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#b13896] focus:ring-1 focus:ring-[#b13896] outline-none transition-all text-sm"
-            placeholder="e.g. Cotton, Khadi, Silk, Linen, Bangles, Necklaces, etc."
+            placeholder="e.g. Cotton, Khadi, Silk, Linen, Jamdani, Appliqué, etc."
             {...register("subCategory")}
           />
         </div>
@@ -234,7 +234,7 @@ export const ProductForm = ({ onSuccess }) => {
       <section className={`bg-slate-50 border border-slate-200/60 rounded-2xl p-4 space-y-4 ${selectedCategory === "Jewellary" ? "hidden" : ""}`}>
         <div className="flex justify-between items-center">
           <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Size & Dynamic Pricing (Optional)</h4>
-          <span className="text-[10px] text-gray-500 font-medium">For sizing variants (e.g. Bangles/Sarees with custom cuts)</span>
+          <span className="text-[10px] text-gray-500 font-medium">For sizing variants (e.g. Blouses/Sarees with custom cuts)</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
@@ -581,7 +581,7 @@ export const EditProductForm = ({ product, onSuccess }) => {
           <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Sub-category</label>
           <input
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#b13896] focus:ring-1 focus:ring-[#b13896] outline-none transition-all text-sm"
-            placeholder="e.g. Cotton, Khadi, Silk, Linen, Bangles, Necklaces, etc."
+            placeholder="e.g. Cotton, Khadi, Silk, Linen, Jamdani, Appliqué, etc."
             {...register("subCategory")}
           />
         </div>
@@ -657,7 +657,7 @@ export const EditProductForm = ({ product, onSuccess }) => {
       <section className={`bg-slate-50 border border-slate-200/60 rounded-2xl p-4 space-y-4 ${selectedCategory === "Jewellary" ? "hidden" : ""}`}>
         <div className="flex justify-between items-center">
           <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Size & Dynamic Pricing (Optional)</h4>
-          <span className="text-[10px] text-gray-500 font-medium">For sizing variants (e.g. Bangles/Sarees with custom cuts)</span>
+          <span className="text-[10px] text-gray-500 font-medium">For sizing variants (e.g. Blouses/Sarees with custom cuts)</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 items-end">

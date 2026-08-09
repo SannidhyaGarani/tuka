@@ -275,7 +275,7 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
                 <span className="mb-1 text-xs font-semibold text-slate-500 uppercase tracking-widest block">Sub Category</span>
                 <input
                   type="text"
-                  placeholder="e.g. Cotton, Khadi, Silk, Linen, Bangles, Necklaces, etc."
+                  placeholder="e.g. Cotton, Khadi, Silk, Linen, Jamdani, Appliqué, etc."
                   className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-[14px] outline-none focus:border-[#b13896] transition-colors"
                   {...register("subCategory")}
                 />
@@ -285,7 +285,7 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
                 <span className="mb-1 text-xs font-semibold text-slate-500 uppercase tracking-widest block">Material / Fabric Yarn</span>
                 <input
                   type="text"
-                  placeholder="e.g. Pure Tissue Linen"
+                  placeholder="e.g. 100s Combed Cotton, Tussar Silk, Flax Linen"
                   className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-[14px] outline-none focus:border-[#b13896] transition-colors"
                   {...register("material")}
                 />

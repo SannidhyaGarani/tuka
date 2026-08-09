@@ -98,7 +98,7 @@ const Footer = () => {
                   <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-12 lg:h-14 object-contain" style={{ filter: 'brightness(0)' }} />
                 </Link>
                 <p className="text-[#3D3460] text-[15px] lg:text-[16px] leading-relaxed max-w-xs font-light">
-                  Celebrate tradition, worn everyday. Tuka brings you the finest ethnic fashion — from handloom sarees to artisan jewellery.
+                  Celebrate tradition, worn everyday. Tuka brings you the finest ethnic fashion — from handloom sarees to designer blouses.
                 </p>
               </div>
 

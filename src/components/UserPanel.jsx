@@ -58,13 +58,7 @@ const statusBadgeClasses = (status) => {
       return "bg-slate-50 text-slate-700 border-slate-100";
   }
 };
-      return "bg-emerald-50 text-emerald-700 border-emerald-100";
-    case "Processing":
-      return "bg-amber-50 text-amber-700 border-amber-100";
-    default:
-      return "bg-slate-50 text-slate-700 border-slate-100";
-  }
-};
+      
 
 const UserPanel = () => {
   const [activeTab, setActiveTab] = useState("My Orders");
@@ -355,7 +349,7 @@ const UserPanel = () => {
           <div className="hidden sm:flex flex-col items-end text-xs">
             <span className="text-slate-500">Signed in as</span>
             <span className="font-medium text-slate-900">
-              jordan.rivera@jewellery.com
+              jordan.rivera@tuka.in
             </span>
           </div>
         </div>

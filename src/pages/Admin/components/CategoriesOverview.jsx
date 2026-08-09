@@ -2,9 +2,9 @@ import React from "react";
 import { Layers, ChevronRight, Gem } from "lucide-react";
 
 const categories = [
-  { name: "Necklaces", group: "Core", count: 18, icon: "💎", accent: "bg-rose-50 border-rose-100", badge: "bg-rose-100 text-rose-700" },
-  { name: "Earrings", group: "Adornment", count: 27, icon: "✨", accent: "bg-blue-50 border-blue-100", badge: "bg-blue-100 text-blue-700" },
-  { name: "Rings", group: "Accents", count: 15, icon: "💍", accent: "bg-amber-50 border-amber-100", badge: "bg-amber-100 text-amber-700" },
+  { name: "Handloom Sarees", group: "Core Weaves", count: 42, icon: "🪷", accent: "bg-rose-50 border-rose-100", badge: "bg-rose-100 text-rose-700" },
+  { name: "Designer Blouses", group: "Apparel", count: 28, icon: "🌸", accent: "bg-blue-50 border-blue-100", badge: "bg-blue-100 text-blue-700" },
+  { name: "Silk & Khadi", group: "Artisanal", count: 35, icon: "✦", accent: "bg-amber-50 border-amber-100", badge: "bg-amber-100 text-amber-700" },
 ];
 
 const CategoriesOverview = () => (
@@ -18,7 +18,7 @@ const CategoriesOverview = () => (
           Categories
         </h2>
         <p className="text-xs text-slate-400 font-medium mt-1 ml-0.5">
-          High-level structure of your jewelry catalog
+          High-level structure of your handloom catalog
         </p>
       </div>
       <span className="text-[14px] font-bold text-slate-400 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-full">

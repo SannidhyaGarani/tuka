@@ -11,7 +11,7 @@ const CSVUpload = ({ onComplete }) => {
 
   const downloadSample = () => {
     const csvContent = "name,category,description,original_price,price,stock,material,stones,size_weight,discount,care_instructions,images\n" +
-      "Emerald Queen Choker,Necklace,A breathtaking emerald choker with gold plating,15000,12000,25,22K Gold Plated Brass,Handcrafted Kundan,Adjustable,20,Keep away from water and perfume,https://res.cloudinary.com/demo/image/upload/sample.jpg";
+      "Dhaniakhali Handloom Saree,Handloom Saree,A crisp fine 100s count Bengal cotton saree,4500,3800,25,100s Count Combed Cotton,None,Standard 5.5m,15,Hand wash in cold water with mild detergent,https://images.unsplash.com/photo-1610030470298-40e1eaccf77d?auto=format&fit=crop&q=80&w=800";
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
