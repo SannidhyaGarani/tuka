@@ -124,8 +124,8 @@ const NotFound = () => {
         </motion.div>
       </div>
 
-      {/* Grainy Texture */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      {/* Ambient Radial Overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[radial-gradient(ellipse_at_center,#b13896_0%,transparent_70%)]" />
     </div>
   );
 };

@@ -58,7 +58,6 @@ const statusBadgeClasses = (status) => {
       return "bg-slate-50 text-slate-700 border-slate-100";
   }
 };
-      
 
 const UserPanel = () => {
   const [activeTab, setActiveTab] = useState("My Orders");

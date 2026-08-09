@@ -144,40 +144,18 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen bg-[#FDFAF5] font-sans text-[#161114]">
       
-      {/* Premium Dark Crimson Breadcrumb Banner */}
-      <div 
-        className="relative w-full h-[220px] sm:h-[300px] flex items-center justify-center overflow-hidden" 
-        style={{ background: 'linear-gradient(135deg, #161114 0%, #301729 50%, #571c4c 100%)' }}
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(216,97,188,0.15)_0%,transparent_70%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-black/45" />
-
-        <div className="relative z-10 text-center px-5 pt-20 md:pt-24 text-white">
-          <div className="flex items-center justify-center gap-2.5 text-[9px] md:text-[14px] tracking-[0.3em] font-bold uppercase text-white/50 mb-4 sm:mb-6">
-            <button onClick={() => navigate('/')} className="hover:text-[#d861bc] transition-colors cursor-pointer">Home</button>
-            <ChevronRight size={10} className="text-white/20" />
-            <button onClick={() => navigate('/shop')} className="hover:text-[#d861bc] transition-colors cursor-pointer">Shop</button>
-            {product.category && (
-              <>
-                <ChevronRight size={10} className="text-white/20" />
-                <button onClick={() => navigate(`/shop?category=${product.category}`)} className="hover:text-[#d861bc] transition-colors cursor-pointer">{product.category}</button>
-              </>
-            )}
-            <ChevronRight size={10} className="text-white/20" />
-            <span className="text-[#d861bc] font-semibold">{product.name}</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-serif tracking-tight leading-tight max-w-[800px] mx-auto line-clamp-1 italic font-light">
-            {product.name}
-          </h1>
-
-          <p className="text-[14px] tracking-[0.2em] uppercase font-bold text-white/30 mt-3 sm:mt-4">
-            House of Tuka
-          </p>
-        </div>
-
-        <div className="absolute bottom-0 left-0 w-full h-12 bg-[#FDFAF5] rounded-t-[50%] md:rounded-t-[100%] scale-x-125 translate-y-6" />
-      </div>
+      <Breadcrumb
+        title={product.name}
+        subtitle={product.category ? `Authentic Bengal Handloom • ${product.category}` : "Handcrafted Masterpiece"}
+        bgImage={product.image || product.images?.[0] || "https://images.unsplash.com/photo-1610030470298-40e1eaccf77d?auto=format&fit=crop&q=80&w=1600"}
+        links={[
+          { name: 'Home', href: '/' },
+          { name: 'Shop', href: '/shop' },
+          { name: product.category || 'Collection', href: `/shop?cat=${encodeURIComponent(product.category || 'all')}` },
+          { name: 'Details', href: '#product-details', active: true }
+        ]}
+        badgeText="HOUSE OF TUKA • HANDLOOM HERITAGE"
+      />
 
       {/* Main Product Section */}
       <div className="max-w-[1280px] mx-auto px-5 sm:px-8 py-8 pb-16">

@@ -27,8 +27,8 @@ const About = () => {
 
       {/* ── BREADCRUMB HERO ────────────────────────────────────── */}
       <Breadcrumb
-        title="Our Story"
-        subtitle="The journey of The Founders — bringing global craftsmanship home."
+        title="Our Weaving Heritage"
+        subtitle="Centuries of master weaving tradition, reimagined for the modern woman."
         bgImage="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&q=80&w=1600"
         links={breadcrumbLinks}
       />

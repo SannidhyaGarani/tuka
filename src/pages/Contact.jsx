@@ -45,7 +45,7 @@ const Contact = () => {
             { 
               icon: Mail, 
               label: "Email Us", 
-              value: "info@tuka.com",
+              value: "hello@tuka.in",
               sub: "Response within 24 hours"
             },
             { 

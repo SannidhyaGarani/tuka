@@ -20,12 +20,18 @@ import {
   ArrowRight
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Breadcrumb from "../components/Breadcrumb";
 
 const Account = () => {
   const { user, logout, deleteAccount } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'overview';
+
+  const breadcrumbLinks = [
+    { name: 'Home', href: '/' },
+    { name: 'Account', href: '/account?tab=overview', active: true }
+  ];
 
   const setActiveTab = (tabName) => {
     const params = new URLSearchParams(searchParams);
@@ -56,16 +62,33 @@ const Account = () => {
         const cartSnap = await getDocs(collection(db, "users", user.uid, "cart"));
         const wishlistSnap = await getDocs(collection(db, "users", user.uid, "wishlist"));
         
-        const ordersRef = collection(db, "users", user.uid, "orders");
-        let ordersSnap;
+        let userOrders = [];
         try {
-          const ordersQuery = query(ordersRef, orderBy("createdAt", "desc"), limit(3));
-          ordersSnap = await getDocs(ordersQuery);
+          const userOrdersSnap = await getDocs(collection(db, "users", user.uid, "orders"));
+          userOrders = userOrdersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         } catch (e) {
-          ordersSnap = await getDocs(query(ordersRef, limit(3)));
+          console.log("Subcollection orders fetch fallback:", e);
         }
-        
-        setRecentOrders(ordersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+
+        try {
+          const globalOrdersQuery = query(collection(db, "orders"));
+          const globalSnap = await getDocs(globalOrdersQuery);
+          const matchedGlobal = globalSnap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(o => o.userId === user.uid || (user.email && o.userEmail === user.email));
+
+          // Combine and deduplicate
+          const combinedMap = new Map();
+          [...userOrders, ...matchedGlobal].forEach(ord => {
+            if (ord.id) combinedMap.set(ord.id, ord);
+          });
+
+          userOrders = Array.from(combinedMap.values());
+        } catch (e) {
+          console.log("Global orders fetch fallback:", e);
+        }
+
+        setRecentOrders(userOrders);
         setStats({
           cart: cartSnap.size,
           wishlist: wishlistSnap.size
@@ -107,33 +130,15 @@ const Account = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F4EF] font-sans text-[#161114] pb-20">
-      {/* Account Hero Banner */}
-      <div 
-        className="relative w-full h-[220px] sm:h-[300px] flex items-center justify-center overflow-hidden" 
-        style={{ background: 'linear-gradient(135deg, #161114 0%, #151011 50%, #201718 100%)' }}
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(200,169,122,0.12)_0%,transparent_70%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-black/35" />
-
-        <div className="relative z-10 text-center px-5 pt-20 md:pt-24 text-white">
-          <div className="flex items-center justify-center gap-2.5 text-[9px] md:text-[14px] tracking-[0.3em] font-bold uppercase text-white/50 mb-4 sm:mb-6">
-            <Link to="/" className="hover:text-[#b13896] transition-colors">Home</Link>
-            <ChevronRight size={10} className="text-white/20" />
-            <span className="text-[#b13896] font-semibold">My Account</span>
-          </div>
-
-          <h1 className="text-4xl md:text-5xl font-serif tracking-tight leading-tight italic font-light">
-            My Account
-          </h1>
-
-          <p className="text-[14px] tracking-[0.2em] uppercase font-bold text-white/30 mt-3 sm:mt-4">
-            Private Atelier
-          </p>
-        </div>
-
-        <div className="absolute bottom-0 left-0 w-full h-12 bg-[#F8F4EF] rounded-t-[50%] md:rounded-t-[100%] scale-x-125 translate-y-6" />
-      </div>
+    <div className="min-h-screen bg-[#FDFAF5] font-sans text-[#161114] pb-24">
+      {/* Shared Ultra-Premium Hero Banner */}
+      <Breadcrumb
+        title="My Account"
+        subtitle="Manage your atelier orders, profile settings, saved addresses, and wishlist."
+        bgImage="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&q=80&w=1600"
+        links={breadcrumbLinks}
+        badgeText="TUKA PATRON • PRIVATE ATELIER"
+      />
 
       <div className="max-w-[1200px] mx-auto px-6 pt-8">
         

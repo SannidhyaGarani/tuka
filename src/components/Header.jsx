@@ -296,125 +296,165 @@ const LuxuryHeader = () => {
               {/* Drawer header */}
               <div
                 className="flex items-center justify-between px-6 py-5"
-                style={{ borderBottom: `1px solid ${MAGENTA}20` }}
+                style={{ borderBottom: `1px solid ${MAGENTA}25` }}
               >
-                <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-9" style={{ filter: 'invert(1)' }} />
+                <div className="flex items-center gap-3">
+                  <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-8" style={{ filter: 'invert(1)' }} />
+                  <span className="text-[9px] font-bold tracking-[0.25em] text-[#f4cfeb] uppercase bg-[#b13896]/20 px-2.5 py-1 rounded-full border border-[#b13896]/30">
+                    ATELIER
+                  </span>
+                </div>
                 <button
                   onClick={() => setMobileOpen(false)}
-                  className="p-2 rounded-full transition-colors"
-                  style={{ border: `1px solid ${MAGENTA}30`, color: 'rgba(255,255,255,0.7)' }}
+                  className="p-2 rounded-full transition-colors cursor-pointer"
+                  style={{ border: `1px solid ${MAGENTA}40`, color: '#ffffff', background: `${MAGENTA}15` }}
                 >
                   <X size={18} strokeWidth={1.5} />
                 </button>
               </div>
 
+              {/* Quick Category Tag Pills */}
+              <div className="px-6 pt-4 pb-2 flex gap-2 overflow-x-auto scrollbar-hide border-b border-white/5">
+                {[
+                  { name: 'All Sarees', cat: 'handloom-saree' },
+                  { name: 'Blouses', cat: 'designer-blouse' },
+                  { name: 'Silk', cat: 'silk' },
+                  { name: 'Khadi', cat: 'khadi' },
+                  { name: 'Linen', cat: 'linen' },
+                ].map((tag, idx) => (
+                  <Link
+                    key={idx}
+                    to={`/shop?cat=${tag.cat}#products`}
+                    onClick={() => setMobileOpen(false)}
+                    className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/10 text-white/80 hover:bg-[#b13896] hover:text-white transition-all whitespace-nowrap"
+                  >
+                    {tag.name}
+                  </Link>
+                ))}
+              </div>
+
               {/* Nav items */}
-              <div className="flex-1 overflow-y-auto px-6 py-4">
-                {navLinks.map((link) => (
-                  <div key={link.name} style={{ borderBottom: `1px solid rgba(177,56,150,0.08)` }}>
-                    <div
-                      className="flex justify-between items-center py-5 cursor-pointer"
-                      onClick={() => {
-                        if (link.megaMenu) {
-                          setMobileExpanded(mobileExpanded === link.name ? null : link.name);
-                        } else {
-                          setMobileOpen(false);
-                        }
-                      }}
-                    >
-                      {link.megaMenu ? (
-                        <span className="text-xl font-light text-white" style={{ fontFamily: NAV_SANS }}>
-                          {link.name}
-                        </span>
-                      ) : (
+              <div className="flex-1 overflow-y-auto px-6 py-4 space-y-1">
+                {navLinks.map((link) => {
+                  const isActive = location.pathname + location.search === link.href;
+
+                  return (
+                    <div key={link.name} style={{ borderBottom: `1px solid rgba(177,56,150,0.12)` }}>
+                      <div className="flex justify-between items-center py-4">
                         <Link
                           to={link.href}
                           onClick={() => setMobileOpen(false)}
-                          className="text-xl font-light text-white"
+                          className={`text-lg font-light flex items-center gap-2 transition-colors ${
+                            isActive ? 'text-[#f4cfeb] font-semibold' : 'text-white/90 hover:text-[#b13896]'
+                          }`}
                           style={{ fontFamily: NAV_SANS }}
                         >
+                          {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#b13896]" />}
                           {link.name}
                         </Link>
-                      )}
-                      {link.megaMenu && (
-                        <ChevronDown
-                          size={18}
-                          strokeWidth={1.5}
-                          style={{
-                            color: MAGENTA,
-                            transform: mobileExpanded === link.name ? 'rotate(180deg)' : 'rotate(0)',
-                            transition: 'transform 0.3s ease',
-                          }}
-                        />
-                      )}
-                    </div>
-
-                    <AnimatePresence>
-                      {mobileExpanded === link.name && link.megaMenu && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                          className="overflow-hidden"
-                        >
-                          <div
-                            className="mb-5 rounded-lg p-5 space-y-6"
-                            style={{ background: 'rgba(177, 56, 150,0.06)' }}
+                        {link.megaMenu && (
+                          <button
+                            onClick={() => setMobileExpanded(mobileExpanded === link.name ? null : link.name)}
+                            className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
                           >
-                            {link.megaMenu.sections.map((section, idx) => (
-                              <div key={idx} className="space-y-3">
-                                <p className="text-[9px] tracking-[0.28em] uppercase font-bold" style={{ color: MAGENTA }}>
-                                  {section.icon} {section.title}
-                                </p>
-                                <ul className="space-y-2 pl-3">
-                                  {section.items.map((item, i) => (
-                                    <li key={i}>
-                                      <Link
-                                        to={`${link.href.split('#')[0]}&item=${item.toLowerCase().replace(/ /g, '-')}#products`}
-                                        onClick={() => setMobileOpen(false)}
-                                        className="text-sm text-white/55 hover:text-white transition-colors"
-                                        style={{ fontFamily: NAV_SANS }}
-                                      >
-                                        {item}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
+                            <ChevronDown
+                              size={18}
+                              strokeWidth={1.5}
+                              style={{
+                                color: MAGENTA,
+                                transform: mobileExpanded === link.name ? 'rotate(180deg)' : 'rotate(0)',
+                                transition: 'transform 0.3s ease',
+                              }}
+                            />
+                          </button>
+                        )}
+                      </div>
+
+                      <AnimatePresence>
+                        {mobileExpanded === link.name && link.megaMenu && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                            className="overflow-hidden mb-4"
+                          >
+                            <div
+                              className="rounded-xl p-4 space-y-5"
+                              style={{ background: 'rgba(177, 56, 150,0.12)', border: '1px solid rgba(177, 56, 150,0.2)' }}
+                            >
+                              {link.megaMenu.sections.map((section, idx) => (
+                                <div key={idx} className="space-y-2">
+                                  <p className="text-[10px] tracking-[0.25em] uppercase font-bold" style={{ color: '#f4cfeb' }}>
+                                    {section.icon} {section.title}
+                                  </p>
+                                  <ul className="space-y-1.5 pl-3">
+                                    {section.items.map((item, i) => (
+                                      <li key={i}>
+                                        <Link
+                                          to={`/shop?q=${encodeURIComponent(item)}#products`}
+                                          onClick={() => setMobileOpen(false)}
+                                          className="text-xs text-white/70 hover:text-white transition-colors block py-0.5"
+                                          style={{ fontFamily: NAV_SANS }}
+                                        >
+                                          {item}
+                                        </Link>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Drawer footer */}
               <div
-                className="px-8 py-6"
-                style={{ borderTop: `1px solid ${MAGENTA}15`, background: `${MAGENTA}08` }}
+                className="px-6 py-5"
+                style={{ borderTop: `1px solid ${MAGENTA}25`, background: 'rgba(22,17,20,0.95)' }}
               >
-                <div className="flex justify-around items-center">
-                  {[
-                    { to: '/wishlist?view=saved#wishlist-items', icon: <Heart size={20} strokeWidth={1.5} />, label: 'Wishlist' },
-                    { to: '/account?tab=overview#profile', icon: <User size={20} strokeWidth={1.5} />, label: 'Profile' },
-                    { to: '/cart?step=view#cart-summary', icon: <ShoppingBag size={20} strokeWidth={1.5} />, label: 'Cart' },
-                  ].map(({ to, icon, label }) => (
-                    <Link
-                      key={to}
-                      to={to}
-                      onClick={() => setMobileOpen(false)}
-                      className="flex flex-col items-center gap-2 transition-colors group"
-                      style={{ color: 'rgba(255,255,255,0.5)' }}
-                    >
-                      <span className="group-hover:text-[#b13896] transition-colors">{icon}</span>
-                      <span className="text-[9px] tracking-[0.22em] font-bold uppercase group-hover:text-[#b13896] transition-colors">
-                        {label}
+                <div className="grid grid-cols-3 gap-2">
+                  <Link
+                    to="/wishlist?ref=drawer#wishlist"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex flex-col items-center py-2.5 px-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#b13896] transition-all relative group"
+                  >
+                    <Heart size={18} strokeWidth={1.5} className="text-[#f4cfeb] mb-1" />
+                    <span className="text-[9px] tracking-wider font-bold uppercase text-white/80">Wishlist</span>
+                    {wishlistCount > 0 && (
+                      <span className="absolute top-1.5 right-3 bg-[#b13896] text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                        {wishlistCount}
                       </span>
-                    </Link>
-                  ))}
+                    )}
+                  </Link>
+
+                  <Link
+                    to="/account?tab=overview#profile"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex flex-col items-center py-2.5 px-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#b13896] transition-all group"
+                  >
+                    <User size={18} strokeWidth={1.5} className="text-[#f4cfeb] mb-1" />
+                    <span className="text-[9px] tracking-wider font-bold uppercase text-white/80">Account</span>
+                  </Link>
+
+                  <Link
+                    to="/cart?ref=drawer#cart"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex flex-col items-center py-2.5 px-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#b13896] transition-all relative group"
+                  >
+                    <ShoppingBag size={18} strokeWidth={1.5} className="text-[#f4cfeb] mb-1" />
+                    <span className="text-[9px] tracking-wider font-bold uppercase text-white/80">Cart</span>
+                    {cartCount > 0 && (
+                      <span className="absolute top-1.5 right-3 bg-[#b13896] text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Link>
                 </div>
               </div>
             </motion.aside>

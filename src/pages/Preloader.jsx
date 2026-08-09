@@ -135,8 +135,8 @@ const PremiumPreloader = ({ onComplete }) => {
             <span className="text-[9px] tracking-[0.5em] uppercase text-[#b13896]/55 font-bold">Dhaniakhali</span>
           </div>
 
-          {/* Background Noise for texture */}
-          <div className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-multiply bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+          {/* Background Gradient Texture */}
+          <div className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-multiply bg-gradient-to-b from-[#b13896]/10 to-transparent" />
         </motion.div>
       )}
     </AnimatePresence>

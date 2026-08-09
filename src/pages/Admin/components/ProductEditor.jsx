@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ChevronRight, Plus, Trash } from "lucide-react";
+import { ChevronRight, Plus, Trash, FolderPlus } from "lucide-react";
 import { createProduct, updateProduct } from "../../../services/productService";
 import { uploadToCloudinary } from "../../../config/cloudinary";
 import ProductMediaPicker from "./ProductMediaPicker";
-
-const CATEGORIES = [
-  "Handloom Saree",
-  "Designer Blouse",
-  "Saree",
-  "Bags",
-  "Kurtis",
-  "Stoles",
-  "Dress material",
-  "Jewellary",
-  "Boutique Collection",
-  "New Arrivals"
-];
-
-const BRANDS = ["Tuka", "Boutique"];
+import { useCatalogData } from "./useCatalogData";
 
 const ProductEditor = ({ product, onCancel, onSuccess }) => {
+  const { categories, subCategories, brands, addCategory, addSubCategory } = useCatalogData();
+  const [showAddCatInput, setShowAddCatInput] = useState(false);
+  const [newCatVal, setNewCatVal] = useState("");
+  const [showAddSubCatInput, setShowAddSubCatInput] = useState(false);
+  const [newSubCatVal, setNewSubCatVal] = useState("");
+
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm({
     defaultValues: {
       name: "",
@@ -174,6 +166,14 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
         featuredProduct: !!values.featuredProduct,
       };
 
+      // Auto-sync new category and subcategory to Firestore
+      if (values.category) {
+        await addCategory(values.category);
+      }
+      if (values.subCategory) {
+        await addSubCategory(values.subCategory, values.category);
+      }
+
       if (product?.id) {
         await updateProduct(product.id, payload);
       } else {
@@ -249,7 +249,7 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
                   className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-[14px] bg-white outline-none focus:border-[#b13896] transition-colors"
                   {...register("brand")}
                 >
-                  {BRANDS.map(b => (
+                  {brands.map(b => (
                     <option key={b} value={b}>{b}</option>
                   ))}
                 </select>
@@ -257,29 +257,109 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <label className="block">
-                <span className="mb-1 text-xs font-semibold text-slate-500 uppercase tracking-widest block">Category *</span>
-                <select
-                  className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-[14px] bg-white outline-none focus:border-[#b13896] transition-colors"
-                  {...register("category", { required: true })}
-                >
-                  <option value="">Select Category</option>
-                  {CATEGORIES.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
+              {/* Category Dropdown & Quick Add */}
+              <div className="block">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Category *</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddCatInput(!showAddCatInput)}
+                    className="text-[11px] text-[#b13896] font-bold hover:underline flex items-center gap-1"
+                  >
+                    + Add New
+                  </button>
+                </div>
+                {showAddCatInput ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="New Category Name"
+                      value={newCatVal}
+                      onChange={(e) => setNewCatVal(e.target.value)}
+                      className="w-full rounded-xl border border-[#b13896] px-3 py-2 text-xs outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (newCatVal.trim()) {
+                          await addCategory(newCatVal);
+                          setValue("category", newCatVal.trim());
+                          setNewCatVal("");
+                          setShowAddCatInput(false);
+                        }
+                      }}
+                      className="px-3 py-2 bg-[#b13896] text-white text-xs font-bold rounded-xl"
+                    >
+                      Save
+                    </button>
+                  </div>
+                ) : (
+                  <select
+                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-[14px] bg-white outline-none focus:border-[#b13896] transition-colors"
+                    {...register("category", { required: true })}
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                )}
                 {errors.category && <span className="text-xs text-red-500 mt-1 block">Category is required</span>}
-              </label>
+              </div>
 
-              <label className="block">
-                <span className="mb-1 text-xs font-semibold text-slate-500 uppercase tracking-widest block">Sub Category</span>
-                <input
-                  type="text"
-                  placeholder="e.g. Cotton, Khadi, Silk, Linen, Jamdani, Appliqué, etc."
-                  className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-[14px] outline-none focus:border-[#b13896] transition-colors"
-                  {...register("subCategory")}
-                />
-              </label>
+              {/* Sub-Category Field & Datalist */}
+              <div className="block">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Sub Category</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddSubCatInput(!showAddSubCatInput)}
+                    className="text-[11px] text-[#b13896] font-bold hover:underline flex items-center gap-1"
+                  >
+                    + Add New
+                  </button>
+                </div>
+                {showAddSubCatInput ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="New Sub-category Name"
+                      value={newSubCatVal}
+                      onChange={(e) => setNewSubCatVal(e.target.value)}
+                      className="w-full rounded-xl border border-[#b13896] px-3 py-2 text-xs outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (newSubCatVal.trim()) {
+                          await addSubCategory(newSubCatVal, watch("category"));
+                          setValue("subCategory", newSubCatVal.trim());
+                          setNewSubCatVal("");
+                          setShowAddSubCatInput(false);
+                        }
+                      }}
+                      className="px-3 py-2 bg-[#b13896] text-white text-xs font-bold rounded-xl"
+                    >
+                      Save
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <input
+                      type="text"
+                      list="subcategories-list"
+                      placeholder="Select or type sub-category..."
+                      className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-[14px] outline-none focus:border-[#b13896] transition-colors bg-white"
+                      {...register("subCategory")}
+                    />
+                    <datalist id="subcategories-list">
+                      {subCategories.map(s => (
+                        <option key={s} value={s} />
+                      ))}
+                    </datalist>
+                  </>
+                )}
+              </div>
 
               <label className="block">
                 <span className="mb-1 text-xs font-semibold text-slate-500 uppercase tracking-widest block">Material / Fabric Yarn</span>

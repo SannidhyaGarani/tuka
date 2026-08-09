@@ -11,24 +11,16 @@ import {
 
 import { uploadToCloudinary } from "../../../config/cloudinary";
 import CloudinaryImageLibrary from "./CloudinaryImageLibrary";
-
-const DEFAULT_CATEGORIES = [
-  "Handloom Saree",
-  "Designer Blouse",
-  "Saree",
-  "Bags",
-  "Kurtis",
-  "Stoles",
-  "Dress material",
-  "Jewellary",
-  "Boutique Collection",
-  "New Arrivals"
-];
-
-const DEFAULT_BRANDS = ["Tuka", "Boutique"];
+import { useCatalogData } from "./useCatalogData";
 
 export const ProductForm = ({ onSuccess }) => {
-  const { register, handleSubmit, reset, watch, formState } = useForm({
+  const { categories, subCategories, brands, addCategory, addSubCategory } = useCatalogData();
+  const [showAddCatInput, setShowAddCatInput] = useState(false);
+  const [newCatVal, setNewCatVal] = useState("");
+  const [showAddSubCatInput, setShowAddSubCatInput] = useState(false);
+  const [newSubCatVal, setNewSubCatVal] = useState("");
+
+  const { register, handleSubmit, reset, setValue, watch, formState } = useForm({
     defaultValues: {
       name: "",
       category: "",
@@ -89,6 +81,14 @@ export const ProductForm = ({ onSuccess }) => {
     setError("");
     setLoading(true);
     try {
+      // Auto-sync category & subcategory to Firestore
+      if (values.category) {
+        await addCategory(values.category);
+      }
+      if (values.subCategory) {
+        await addSubCategory(values.subCategory, values.category);
+      }
+
       const files = values.images?.[0] ? Array.from(values.images) : [];
       const uploadUrls = [...selectedCloudinaryImages];
       for (const file of files) {
@@ -135,7 +135,7 @@ export const ProductForm = ({ onSuccess }) => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Product Name</label>
+          <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Product Name *</label>
           <input
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#b13896] focus:ring-1 focus:ring-[#b13896] outline-none transition-all text-sm"
             placeholder="e.g. Begampuri Jamdani Cotton"
@@ -143,24 +143,102 @@ export const ProductForm = ({ onSuccess }) => {
           />
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Category</label>
-          <select
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#b13896] focus:ring-1 focus:ring-[#b13896] outline-none transition-all text-sm appearance-none bg-white"
-            {...register("category", { required: true })}
-          >
-            <option value="">Select Category</option>
-            {DEFAULT_CATEGORIES.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
+          <div className="flex justify-between items-center">
+            <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Category *</label>
+            <button
+              type="button"
+              onClick={() => setShowAddCatInput(!showAddCatInput)}
+              className="text-[11px] text-[#b13896] font-bold hover:underline"
+            >
+              + Add New
+            </button>
+          </div>
+          {showAddCatInput ? (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="New Category Name"
+                value={newCatVal}
+                onChange={(e) => setNewCatVal(e.target.value)}
+                className="w-full rounded-xl border border-[#b13896] px-3 py-2 text-xs outline-none"
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  if (newCatVal.trim()) {
+                    await addCategory(newCatVal);
+                    setValue("category", newCatVal.trim());
+                    setNewCatVal("");
+                    setShowAddCatInput(false);
+                  }
+                }}
+                className="px-3 py-2 bg-[#b13896] text-white text-xs font-bold rounded-xl"
+              >
+                Save
+              </button>
+            </div>
+          ) : (
+            <select
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#b13896] focus:ring-1 focus:ring-[#b13896] outline-none transition-all text-sm appearance-none bg-white"
+              {...register("category", { required: true })}
+            >
+              <option value="">Select Category</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          )}
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Sub-category</label>
-          <input
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#b13896] focus:ring-1 focus:ring-[#b13896] outline-none transition-all text-sm"
-            placeholder="e.g. Cotton, Khadi, Silk, Linen, Jamdani, Appliqué, etc."
-            {...register("subCategory")}
-          />
+          <div className="flex justify-between items-center">
+            <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Sub-category</label>
+            <button
+              type="button"
+              onClick={() => setShowAddSubCatInput(!showAddSubCatInput)}
+              className="text-[11px] text-[#b13896] font-bold hover:underline"
+            >
+              + Add New
+            </button>
+          </div>
+          {showAddSubCatInput ? (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="New Sub-category Name"
+                value={newSubCatVal}
+                onChange={(e) => setNewSubCatVal(e.target.value)}
+                className="w-full rounded-xl border border-[#b13896] px-3 py-2 text-xs outline-none"
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  if (newSubCatVal.trim()) {
+                    await addSubCategory(newSubCatVal, watch("category"));
+                    setValue("subCategory", newSubCatVal.trim());
+                    setNewSubCatVal("");
+                    setShowAddSubCatInput(false);
+                  }
+                }}
+                className="px-3 py-2 bg-[#b13896] text-white text-xs font-bold rounded-xl"
+              >
+                Save
+              </button>
+            </div>
+          ) : (
+            <>
+              <input
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#b13896] focus:ring-1 focus:ring-[#b13896] outline-none transition-all text-sm bg-white"
+                list="form-subcategories-list"
+                placeholder="Select or type sub-category..."
+                {...register("subCategory")}
+              />
+              <datalist id="form-subcategories-list">
+                {subCategories.map((s) => (
+                  <option key={s} value={s} />
+                ))}
+              </datalist>
+            </>
+          )}
         </div>
       </div>
 
@@ -171,7 +249,7 @@ export const ProductForm = ({ onSuccess }) => {
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-[#b13896] focus:ring-1 focus:ring-[#b13896] outline-none transition-all text-sm bg-white"
             {...register("brand")}
           >
-            {DEFAULT_BRANDS.map(br => (
+            {brands.map(br => (
               <option key={br} value={br}>{br}</option>
             ))}
           </select>
