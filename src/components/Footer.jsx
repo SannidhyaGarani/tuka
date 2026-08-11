@@ -169,27 +169,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Trust Badges */}
-          <div
-            className="flex flex-wrap justify-center gap-6 py-8 mb-8 rounded-xl"
-            style={{ background: `${DARK}08`, border: `1px solid ${DARK}0c` }}
-          >
-            {[
-              '🔒 Secure Payments',
-              '🚚 Free Shipping Pan India',
-              '↩ Easy 30-Day Returns',
-              '✨ 100% Authentic Products',
-              '⭐ 4.9 Rated by 10k+ Customers',
-            ].map((badge) => (
-              <span
-                key={badge}
-                className="text-[13px] font-medium tracking-wide"
-                style={{ color: DARK }}
-              >
-                {badge}
-              </span>
-            ))}
-          </div>
 
           {/* Bottom Copyright */}
           <div className="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderColor: `${DARK}12` }}>

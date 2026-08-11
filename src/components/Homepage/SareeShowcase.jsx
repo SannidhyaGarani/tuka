@@ -162,12 +162,12 @@ const SareeShowcase = () => {
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
         
         {/* Standardized Unified Section Header */}
-        <SectionHeader
-          badgeText="BENGAL HANDLOOM LEGACY"
-          badgeIcon={<Compass />}
-          titlePrefix="Iconic Weaves of"
-          highlightText="Bengal"
-          description="Explore our curated trio of Bengal’s most treasured handloom traditions. Every saree tells a story of century-old looms, natural yarns, and master craftsmanship."
+       <SectionHeader
+          badgeText="THE BRAND PROMISE"
+          badgeIcon={<Sparkles />}
+          titlePrefix="Craftsmanship in Every"
+          highlightText="Detail"
+          description="We curate luxury ethnic pieces directly from the source — celebrating Indian heritage, weavers, and your timeless expressions."
         />
 
         {/* Quick jump tabs */}
