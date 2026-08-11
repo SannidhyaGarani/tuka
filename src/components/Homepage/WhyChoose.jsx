@@ -11,7 +11,7 @@ const LIGHT_BG = '#FDFBFB';
 const features = [
   {
     icon: <Sparkles className="w-5 h-5" strokeWidth={1.5} />,
-    title: "Artisan Handloom",
+    title: "Pure Handloom",
     description: "Directly sourced from traditional weavers and handloom houses across India's master craft clusters."
   },
   {
@@ -26,7 +26,7 @@ const features = [
   },
   {
     icon: <Heart className="w-5 h-5" strokeWidth={1.5} />,
-    title: "Artisan Welfare",
+    title: "Fair Trade Pride",
     description: "Proudly supporting regional weavers with guaranteed fair wages and ethical community trade."
   },
   {

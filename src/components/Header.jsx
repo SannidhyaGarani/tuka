@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Search, Menu, X, ShoppingBag, Heart, User,
   ChevronDown, ChevronLeft, ChevronRight, ArrowRight,
 } from 'lucide-react';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from './Firebase';
 import { useAuth } from './useAuth';
 import { useStore } from '../hooks/useStore';
 
@@ -38,6 +40,35 @@ const LuxuryHeader = () => {
   const { user } = useAuth();
   const { cartCount, wishlistCount } = useStore();
 
+  // Firestore dynamic products & categories state
+  const [dbProducts, setDbProducts] = useState([]);
+  const [dbCategories, setDbCategories] = useState([]);
+  const [dbSubcategories, setDbSubcategories] = useState([]);
+
+  useEffect(() => {
+    const unsubProds = onSnapshot(collection(db, 'products'), (snap) => {
+      setDbProducts(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    });
+
+    const unsubCats = onSnapshot(collection(db, 'categories'), (snap) => {
+      setDbCategories(snap.docs.map((doc) => doc.data().name).filter(Boolean));
+    });
+
+    const unsubSubs = onSnapshot(collection(db, 'subcategories'), (snap) => {
+      setDbSubcategories(
+        snap.docs
+          .map((doc) => doc.data().name)
+          .filter(Boolean)
+      );
+    });
+
+    return () => {
+      unsubProds();
+      unsubCats();
+      unsubSubs();
+    };
+  }, []);
+
   useEffect(() => {
     if (!isTransparentRoute) { setScrolled(true); return; }
     setScrolled(window.scrollY > 40);
@@ -51,51 +82,95 @@ const LuxuryHeader = () => {
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen, searchOpen]);
 
-  /* ─ Nav Data ──────────────────────────────────────── */
-  const navLinks = [
-    {
-      name: 'Handloom Saree', href: '/shop?cat=handloom-saree#products',
-      megaMenu: {
-        sections: [
-          { title: 'Cotton Saree', icon: '🪷', items: ['Mul Cotton', 'Dhaniakhali', 'Begampuri', 'Hand paint', 'Applic', 'Ikkat cotton', 'Baluchari', 'Boutique Cotton'] },
-          { title: 'Khadi Saree', icon: '✿', items: ['Plain Khadi', 'Khadi Applic', 'Dongri Khadi', 'Baluchari Khadi', 'Assam Khadi'] },
-          { title: 'Silk Saree', icon: '✧', items: ['Tussar', 'Bishnupuri Pure Silk', 'Ikkat silk', 'Baluchari Silk', 'Matka'] },
-          { title: 'Linen Saree', icon: '◈', items: ['Tissue Linen', 'Plain Linen', 'Linen Jamdani'] },
-        ],
-        image: 'https://images.unsplash.com/photo-1610030470298-40e1eaccf77d?auto=format&fit=crop&q=80&w=800',
-        tagline: 'TERRITORY OF WEAVES',
-        heading: 'Bengal Handloom Heritage',
+  /* ─ Dynamic Nav Data derived from Uploaded Products & Categories ───── */
+  const navLinks = useMemo(() => {
+    // Saree subcategories list dynamically merged with uploaded products
+    const sareeSubcategories = [
+      'Dhaniakhali Saree',
+      'Begumpuri Saree',
+      'Shantipuri Saree',
+      'Hindshree Signature',
+      'Jamdani Saree',
+      'Baluchari Saree',
+      'Kantha Stitch Saree',
+      'Tussar Silk Saree',
+      'Linen Saree',
+      'Organic Cotton Saree',
+      'Chanderi Saree',
+      'Kanjeevaram Saree',
+      'Organza Saree',
+      'Phulia Saree',
+    ];
+
+    // Merge subcategories from uploaded products
+    dbProducts.forEach((p) => {
+      if (p.subCategory && !sareeSubcategories.includes(p.subCategory)) {
+        sareeSubcategories.push(p.subCategory);
+      }
+    });
+
+    dbSubcategories.forEach((s) => {
+      if (s && !sareeSubcategories.includes(s)) {
+        sareeSubcategories.push(s);
+      }
+    });
+
+    return [
+      {
+        name: 'Handloom Saree',
+        href: '/shop?cat=Handloom%20Saree#products',
+        megaMenu: {
+          sections: [
+            {
+              title: 'Featured Weaves & Saree Subcategories',
+              icon: '🪷',
+              items: sareeSubcategories.slice(0, 7),
+            },
+            {
+              title: 'Traditional & Silk Weaves',
+              icon: '✧',
+              items: sareeSubcategories.slice(7, 14),
+            },
+            {
+              title: 'Bengal Handloom Craft',
+              icon: '✿',
+              items: sareeSubcategories.slice(14),
+            },
+          ].filter((sec) => sec.items.length > 0),
+          image: 'https://images.unsplash.com/photo-1610030470298-40e1eaccf77d?auto=format&fit=crop&q=80&w=800',
+          tagline: 'TERRITORY OF WEAVES',
+          heading: 'Bengal Handloom Heritage',
+        },
       },
-    },
-    {
-      name: 'Designer Blouse', href: '/shop?cat=designer-blouse#products',
-      megaMenu: {
-        sections: [
-          { title: 'Cotton Blouse', icon: '◇', items: ['Plain Cotton', 'Printed Cotton', 'Cotton Khadi'] },
-          { title: 'Silk Blouse', icon: '❂', items: ['Pure Silk', 'Tussar Silk', 'Matka Silk'] },
-        ],
-        image: 'https://images.unsplash.com/photo-1583390389001-8c9ac72a65f4?auto=format&fit=crop&q=80&w=800',
-        tagline: 'HANDCRAFTED ACCENTS',
-        heading: 'Tailored Blouses',
+      {
+        name: 'Designer Blouse',
+        href: '/shop?cat=Designer%20Blouse#products',
+        megaMenu: {
+          sections: [
+            {
+              title: 'Blouse Subcategories',
+              icon: '◇',
+              items: ['Cotton Blouse', 'Silk Blouse', 'Printed Blouse', 'Khadi Blouse'],
+            },
+          ],
+          image: 'https://images.unsplash.com/photo-1583390389001-8c9ac72a65f4?auto=format&fit=crop&q=80&w=800',
+          tagline: 'HANDCRAFTED ACCENTS',
+          heading: 'Tailored Blouses',
+        },
       },
-    },
-    { name: 'Saree & Blouse', href: '/shop?cat=saree-blouse#products' },
-    { name: 'Boutique Collection', href: '/shop?cat=boutique#products' },
-    { name: 'Our Story', href: '/about?ref=header#story' },
-    { name: 'Contact us', href: '/contact?ref=header#reach-us' },
-  ];
+      { name: 'Saree', href: '/shop?cat=Saree#products' },
+      { name: 'Boutique Collection', href: '/shop?cat=Boutique%20Collection#products' },
+      { name: 'Our Story', href: '/about?ref=header#story' },
+      { name: 'Contact us', href: '/contact?ref=header#reach-us' },
+    ];
+  }, [dbProducts, dbCategories, dbSubcategories]);
 
   /* ─── Derived header style ────────────────────────── */
   const headerBg = scrolled ? '#ffffff' : 'transparent';
   const headerBorder = scrolled ? 'rgba(0,0,0,0.04)' : 'transparent';
   const textColor = scrolled ? DARK : '#ffffff';
 
-  // Custom filter to make the logo #b13896 when scrolled, else white
-  // White: brightness(0) invert(1)
-  // #b13896 approx filter: filter: invert(34%) sepia(52%) saturate(2461%) hue-rotate(289deg) brightness(88%) contrast(90%);
-  const logoFilter = scrolled
-    ? 'none'
-    : 'brightness(0) invert(1)';
+  const logoFilter = scrolled ? 'none' : 'brightness(0) invert(1)';
 
   return (
     <>
@@ -115,17 +190,28 @@ const LuxuryHeader = () => {
           className="max-w-[1440px] mx-auto px-5 lg:px-12 flex items-center justify-between"
           style={{ height: scrolled ? '64px' : '80px', transition: 'height 0.4s ease' }}
         >
-          {/* ── Left cluster: Menu & Search ── */}
+          {/* ── Left cluster: Redesigned Menu Toggle & Search ── */}
           <div className="flex items-center gap-3 md:gap-5 flex-1">
             <button
               onClick={() => setMobileOpen(true)}
-              className="flex items-center gap-2 p-1.5 transition-colors group"
-              style={{ color: textColor }}
+              className="group relative flex items-center gap-2 px-2.5 py-2 sm:px-3.5 sm:py-2 rounded-full border transition-all duration-300 hover:shadow-md hover:border-[#b13896]/40 active:scale-95 cursor-pointer"
+              style={{
+                borderColor: scrolled ? 'rgba(177, 56, 150, 0.25)' : 'rgba(255, 255, 255, 0.3)',
+                background: scrolled ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(12px)',
+                color: textColor,
+              }}
               aria-label="Open Menu"
             >
-              <Menu size={20} strokeWidth={1.5} className="group-hover:scale-110 transition-transform" />
+              {/* Animated 3-bar toggle icon */}
+              <div className="relative w-4 h-4 sm:w-4.5 sm:h-4.5 flex flex-col justify-center items-center gap-1">
+                <span className="w-3.5 sm:w-4 h-0.5 rounded-full bg-current transition-all group-hover:w-4.5 group-hover:bg-[#b13896]" />
+                <span className="w-4 sm:w-4.5 h-0.5 rounded-full bg-current transition-all group-hover:bg-[#b13896]" />
+                <span className="w-2.5 sm:w-3.5 h-0.5 rounded-full bg-current transition-all group-hover:w-4.5 group-hover:bg-[#b13896]" />
+              </div>
+              {/* Menu text: HIDDEN on mobile screens, ONLY toggle icon shown */}
               <span
-                className="text-[12px] font-semibold uppercase tracking-[0.2em]"
+                className="hidden md:inline-block text-[11px] font-bold uppercase tracking-[0.2em] ml-0.5"
                 style={{ fontFamily: NAV_SANS }}
               >
                 Menu
@@ -299,10 +385,7 @@ const LuxuryHeader = () => {
                 style={{ borderBottom: `1px solid ${MAGENTA}25` }}
               >
                 <div className="flex items-center gap-3">
-                  <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-8" style={{ filter: 'invert(1)' }} />
-                  <span className="text-[9px] font-bold tracking-[0.25em] text-[#f4cfeb] uppercase bg-[#b13896]/20 px-2.5 py-1 rounded-full border border-[#b13896]/30">
-                    ATELIER
-                  </span>
+                  <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-8" style={{ filter: 'brightness(0) invert(1)' }} />
                 </div>
                 <button
                   onClick={() => setMobileOpen(false)}
@@ -527,7 +610,7 @@ const MegaMenuPanel = ({ link }) => (
                 {section.items.map((item, i) => (
                   <li key={i}>
                     <Link
-                      to={`${link.href.split('#')[0]}&item=${item.toLowerCase().replace(/ /g, '-')}#products`}
+                      to={`/shop?q=${encodeURIComponent(item)}#products`}
                       className="text-[14px] text-gray-500 hover:text-[#b13896] hover:translate-x-1 transition-all duration-200 block"
                       style={{ fontFamily: NAV_SANS }}
                     >
@@ -537,7 +620,7 @@ const MegaMenuPanel = ({ link }) => (
                 ))}
                 <li className="pt-2">
                   <Link
-                    to={`${link.href.split('#')[0]}&category=${section.title.toLowerCase().replace(/ /g, '-')}#products`}
+                    to={link.href}
                     className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest transition-colors"
                     style={{ color: MAGENTA_LOCAL }}
                   >

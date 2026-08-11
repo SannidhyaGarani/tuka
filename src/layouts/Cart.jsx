@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const Cart = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { cartItems, updateCartQuantity, removeFromCart } = useStore();
+  const { cartItems, updateCartQuantity, removeFromCart, liveProductsMap } = useStore();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [liveStocks, setLiveStocks] = useState({});
@@ -30,50 +30,42 @@ const Cart = () => {
     }
   }, [searchParams]);
 
+  // Real-time live stock synchronization
   useEffect(() => {
     setItems(cartItems);
-    
-    const validateStock = async () => {
-      if (cartItems.length === 0) return;
-      
-      const newLiveStocks = {};
-      for (const item of cartItems) {
-        try {
-          if (!item.id || item.id.startsWith('bs-')) continue;
-          const [baseId, size] = item.id.split('_');
-          const pRef = doc(db, "products", baseId);
-          const pSnap = await getDoc(pRef);
-          
-          if (pSnap.exists()) {
-            const data = pSnap.data();
-            let actualStock = 0;
-            if (size && data.sizeVariants && data.sizeVariants.length > 0) {
-              const variant = data.sizeVariants.find(v => v.size === size);
-              actualStock = variant ? Number(variant.stock || 0) : 0;
-            } else {
-              actualStock = Number(data.stock || 0);
-            }
-            
-            newLiveStocks[item.id] = actualStock;
-            if (actualStock <= 0) {
-              await removeFromCart(item.id);
-            } else if (item.quantity > actualStock) {
-              await updateCartQuantity(item.id, actualStock);
-            }
-          }
-        } catch (e) {
-          console.error("Stock validation error:", e);
+
+    if (cartItems.length === 0) {
+      setLoading(false);
+      return;
+    }
+
+    const newLiveStocks = {};
+    cartItems.forEach((item) => {
+      if (!item.id) return;
+      const [baseId, size] = item.id.split('_');
+      const liveProduct = liveProductsMap[baseId];
+
+      let actualStock = Number(item.stock || 0);
+      if (liveProduct) {
+        if (size && liveProduct.sizeVariants && liveProduct.sizeVariants.length > 0) {
+          const variant = liveProduct.sizeVariants.find((v) => v.size === size);
+          actualStock = variant ? Number(variant.stock || 0) : 0;
+        } else {
+          actualStock = Number(liveProduct.stock || 0);
         }
       }
-      setLiveStocks(newLiveStocks);
-    };
+      newLiveStocks[item.id] = actualStock;
 
-    if (cartItems.length > 0) {
-      validateStock();
-    }
-    
+      if (actualStock <= 0) {
+        removeFromCart(item.id);
+      } else if (item.quantity > actualStock) {
+        updateCartQuantity(item.id, actualStock);
+      }
+    });
+
+    setLiveStocks(newLiveStocks);
     setLoading(false);
-  }, [cartItems, updateCartQuantity, removeFromCart]);
+  }, [cartItems, liveProductsMap, updateCartQuantity, removeFromCart]);
 
   const removeItem = async (id) => {
     await removeFromCart(id);

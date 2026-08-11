@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Palette, Scissors, ArrowRight, ShieldCheck, Feather, Layers, Compass } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../Firebase';
 import SectionHeader from './SectionHeader';
 
 const MAGENTA = '#b13896';
@@ -23,16 +25,16 @@ const hindshreeCollections = [
   {
     id: 'hand-paint',
     name: 'Hand Paint',
-    category: 'Artisanal',
+    category: 'Craft',
     tag: 'Wearable Canvas',
-    desc: 'Freehand motif paintings crafted with organic natural dyes by rural Bengal artisans.',
+    desc: 'Freehand motif paintings crafted with organic natural dyes by rural Bengal weavers.',
     image: 'https://images.unsplash.com/photo-1583390389001-8c9ac72a65f4?auto=format&fit=crop&q=80&w=600',
     link: '/shop?cat=hand-paint#products'
   },
   {
     id: 'applic',
     name: 'Applic',
-    category: 'Artisanal',
+    category: 'Craft',
     tag: 'Appliqué Stitched',
     desc: 'Intricate geometric fabric cutout stitching celebrating age-old Bengali needlecraft.',
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=600',
@@ -112,9 +114,21 @@ const hindshreeCollections = [
   }
 ];
 
-const categories = ['All', 'Cotton', 'Artisanal', 'Khadi', 'Linen'];
+const categories = ['All', 'Cotton', 'Craft', 'Khadi', 'Linen'];
 
 const HindshreeSection = () => {
+  const [activeCategory, setActiveCategory] = useState('Cotton');
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "settings", "homepage"), (snap) => {
+      if (snap.exists()) setSettings(snap.data());
+    });
+    return () => unsub();
+  }, []);
+
+  const bannerImg = settings?.hindshreeBannerImage || "https://images.unsplash.com/photo-1583390389001-8c9ac72a65f4?auto=format&fit=crop&q=80&w=1000";
+
   const [activeTab, setActiveTab] = useState('All');
 
   const filteredCollections = activeTab === 'All'
@@ -122,8 +136,8 @@ const HindshreeSection = () => {
     : hindshreeCollections.filter(item => item.category === activeTab);
 
   return (
-    <section className="py-10 lg:py-16 relative overflow-hidden" style={{ background: '#161114' }}>
-      {/* Ambient background glow accents */}
+    <section className="py-12 lg:py-20 bg-[#161114] text-white relative overflow-hidden">
+      {/* Background Subtle Accent Glows */}
       <div
         className="absolute top-1/4 left-0 w-96 h-96 rounded-full blur-[140px] pointer-events-none opacity-20"
         style={{ background: MAGENTA }}
@@ -142,7 +156,7 @@ const HindshreeSection = () => {
           <div className="lg:col-span-5 relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 group">
               <img
-                src="https://images.unsplash.com/photo-1583390389001-8c9ac72a65f4?auto=format&fit=crop&q=80&w=1000"
+                src={bannerImg}
                 alt="Hindshree Bengal Handloom Model"
                 className="w-full h-[480px] sm:h-[560px] object-cover object-center transition-transform duration-700 group-hover:scale-105"
               />
@@ -164,7 +178,7 @@ const HindshreeSection = () => {
               {/* Caption Overlay bottom left */}
               <div className="absolute bottom-6 left-6 right-6 z-10 space-y-2">
                 <span className="text-[10px] tracking-[0.3em] uppercase text-white/60 font-medium block" style={{ fontFamily: SANS }}>
-                  BENGAL ARTISANAL STUDIO
+                  BENGAL HANDLOOM STUDIO
                 </span>
                 <p className="text-white text-xl sm:text-2xl font-light leading-snug" style={{ fontFamily: SERIF }}>
                   "Where every thread is an artist's brushstroke."
@@ -235,15 +249,15 @@ const HindshreeSection = () => {
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide flex-nowrap sm:flex-wrap w-full sm:w-auto pb-1">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveTab(cat)}
-                  className={`px-4 py-1.5 rounded-full text-[11px] tracking-wider font-semibold transition-all duration-300 ${
+                  className={`px-4 py-2 rounded-full text-[11px] tracking-wider font-semibold whitespace-nowrap transition-all duration-300 ${
                     activeTab === cat
-                      ? 'bg-[#b13896] text-white shadow-[0_0_15px_rgba(177,56,150,0.4)]'
-                      : 'bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/10'
+                      ? 'bg-[#b13896] text-white shadow-[0_0_15px_rgba(177,56,150,0.4)] scale-105'
+                      : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10'
                   }`}
                   style={{ fontFamily: SANS }}
                 >

@@ -62,7 +62,7 @@ const Login = () => {
           </h2>
 
           <p className="text-white/45 text-[15px] max-w-md leading-relaxed mb-10" style={{ fontFamily: SERIF }}>
-            Where every handloom saree tells a story of timeless craftsmanship, woven by master artisans across Bengal.
+            Where every handloom saree tells a story of timeless craftsmanship, woven by master weavers across Bengal.
           </p>
 
           <div className="flex items-center gap-8">
@@ -83,7 +83,7 @@ const Login = () => {
 
         {/* Mobile logo */}
         <Link to="/" className="lg:hidden mb-10">
-          <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-9" style={{ filter: 'brightness(0)' }} />
+          <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-9" style={{ filter: 'brightness(0) invert(1)' }} />
         </Link>
 
         <motion.div

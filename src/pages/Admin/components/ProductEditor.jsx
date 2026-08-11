@@ -7,11 +7,14 @@ import ProductMediaPicker from "./ProductMediaPicker";
 import { useCatalogData } from "./useCatalogData";
 
 const ProductEditor = ({ product, onCancel, onSuccess }) => {
-  const { categories, subCategories, brands, addCategory, addSubCategory } = useCatalogData();
+  const { categories, subCategories, brands, attributes: catalogAttributes, addCategory, addSubCategory, addAttribute, getSubcategoriesForCategory } = useCatalogData();
   const [showAddCatInput, setShowAddCatInput] = useState(false);
   const [newCatVal, setNewCatVal] = useState("");
   const [showAddSubCatInput, setShowAddSubCatInput] = useState(false);
   const [newSubCatVal, setNewSubCatVal] = useState("");
+
+  const [selectedAttributes, setSelectedAttributes] = useState([]);
+  const [customAttrInput, setCustomAttrInput] = useState("");
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm({
     defaultValues: {
@@ -31,6 +34,8 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
       featuredProduct: false
     }
   });
+
+  const selectedCategory = watch("category", "");
 
   const [saving, setSaving] = useState(false);
   const [media, setMedia] = useState([]);
@@ -68,6 +73,7 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
         source: "cloudinary"
       })));
       setVariants(product.sizeVariants || []);
+      setSelectedAttributes(product.attributes || []);
     } else {
       reset({
         name: "",
@@ -87,8 +93,25 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
       });
       setMedia([]);
       setVariants([]);
+      setSelectedAttributes([]);
     }
   }, [product, reset]);
+
+  const toggleAttribute = (attrName) => {
+    setSelectedAttributes((prev) =>
+      prev.includes(attrName) ? prev.filter((a) => a !== attrName) : [...prev, attrName]
+    );
+  };
+
+  const handleAddCustomAttribute = async () => {
+    const val = customAttrInput.trim();
+    if (!val) return;
+    if (!selectedAttributes.includes(val)) {
+      setSelectedAttributes((prev) => [...prev, val]);
+    }
+    await addAttribute(val);
+    setCustomAttrInput("");
+  };
 
   const addVariant = () => {
     if (!newSize.trim() || !newSelPrice) {
@@ -157,6 +180,7 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
         description: values.description || "",
         care_instructions: values.care_instructions || "",
         tags: values.tags ? values.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+        attributes: selectedAttributes,
         sizeVariants: variants,
         images: imageUrls,
         image: imageUrls[0] || "",
@@ -344,20 +368,15 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
                     </button>
                   </div>
                 ) : (
-                  <>
-                    <input
-                      type="text"
-                      list="subcategories-list"
-                      placeholder="Select or type sub-category..."
-                      className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-[14px] outline-none focus:border-[#b13896] transition-colors bg-white"
-                      {...register("subCategory")}
-                    />
-                    <datalist id="subcategories-list">
-                      {subCategories.map(s => (
-                        <option key={s} value={s} />
-                      ))}
-                    </datalist>
-                  </>
+                  <select
+                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-[14px] outline-none focus:border-[#b13896] transition-colors bg-white"
+                    {...register("subCategory")}
+                  >
+                    <option value="">Select Sub-category (e.g. Saree Weave)</option>
+                    {getSubcategoriesForCategory(selectedCategory).map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
                 )}
               </div>
 
@@ -582,6 +601,65 @@ const ProductEditor = ({ product, onCancel, onSuccess }) => {
               />
               <span className="font-semibold text-xs text-slate-500 uppercase tracking-wider">Featured on Home</span>
             </label>
+          </section>
+
+          {/* Product Attributes & Badges Section */}
+          <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm space-y-4">
+            <div className="flex justify-between items-center border-b pb-2">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">Product Attributes & Badges</h2>
+              <span className="text-[10px] font-bold text-[#b13896] bg-rose-50 px-2 py-0.5 rounded-full">
+                {selectedAttributes.length} selected
+              </span>
+            </div>
+
+            <p className="text-[11px] text-slate-400 font-medium">
+              Select one or multiple attributes (Deal, Hot, Sale, Trending, etc.) to showcase badges on storefront cards:
+            </p>
+
+            <div className="flex flex-wrap gap-2">
+              {catalogAttributes.map((attr) => {
+                const isSelected = selectedAttributes.includes(attr);
+                return (
+                  <button
+                    type="button"
+                    key={attr}
+                    onClick={() => toggleAttribute(attr)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                      isSelected
+                        ? "bg-[#b13896] text-white border-[#b13896] shadow-sm shadow-[#b13896]/30"
+                        : "bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-100"
+                    }`}
+                  >
+                    {isSelected ? "✓ " : "+ "}
+                    {attr}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Custom Attribute Adder */}
+            <div className="pt-2 flex gap-2">
+              <input
+                type="text"
+                placeholder="Add custom tag (e.g. Festival Special)"
+                value={customAttrInput}
+                onChange={(e) => setCustomAttrInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddCustomAttribute();
+                  }
+                }}
+                className="flex-1 px-3 py-1.5 rounded-xl border border-slate-200 text-xs outline-none focus:border-[#b13896]"
+              />
+              <button
+                type="button"
+                onClick={handleAddCustomAttribute}
+                className="bg-slate-900 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-[#b13896] transition-colors"
+              >
+                Add Tag
+              </button>
+            </div>
           </section>
 
           <div className="rounded-2xl border border-amber-100 bg-amber-50/60 p-4 text-[13px] leading-relaxed text-amber-800 shadow-sm border-dashed">

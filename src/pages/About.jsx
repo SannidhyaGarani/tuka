@@ -97,7 +97,7 @@ const About = () => {
                   style={{ fontFamily: SERIF }}
                   {...fadeUp}
                 >
-                  TUKA began with a love for authentic artisan craft and Bengal's loom legacy.
+                  TUKA began with a love for authentic handloom craft and Bengal's loom legacy.
                 </motion.p>
 
                 <motion.p {...fadeUp} transition={{ delay: 0.05 }}>
@@ -114,7 +114,7 @@ const About = () => {
                   {...fadeUp}
                   transition={{ delay: 0.15 }}
                 >
-                  Inspired by the artisans, they dreamed of bringing Bengal's finest weaves directly from loom to wardrobe.
+                  Inspired by the master weavers, they dreamed of bringing Bengal's finest weaves directly from loom to wardrobe.
                 </motion.div>
 
                 <motion.div
@@ -136,7 +136,7 @@ const About = () => {
                 </motion.p>
 
                 <motion.p {...fadeUp} transition={{ delay: 0.3 }}>
-                  For The Founders, TUKA is more than a brand. It is a commitment to artisan welfare, ethical fair trade, and preserving India's textile art for generations to come.
+                  For The Founders, TUKA is more than a brand. It is a commitment to weaver welfare, ethical fair trade, and preserving India's textile art for generations to come.
                 </motion.p>
 
               </div>
@@ -204,7 +204,7 @@ const About = () => {
                 </motion.p>
 
                 <motion.p {...fadeUp} transition={{ delay: 0.1 }}>
-                  When you choose TUKA, you’re not simply choosing a saree. You’re draping centuries of Indian heritage, supporting artisan families, and wearing true craftsmanship.
+                  When you choose TUKA, you’re not simply choosing a saree. You’re draping centuries of Indian heritage, supporting weaver families, and wearing true craftsmanship.
                 </motion.p>
 
                 <motion.p {...fadeUp} transition={{ delay: 0.15 }}>

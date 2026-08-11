@@ -27,6 +27,8 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Shop = lazy(() => import("./pages/Shop"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
+
 const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -63,6 +65,7 @@ const AppRoutes = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
+      {!hideChrome && <FloatingWhatsApp />}
       {!hideChrome && <Footer />}
     </>
   );

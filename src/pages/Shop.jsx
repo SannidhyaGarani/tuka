@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../components/Firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { Search, Heart, ShoppingBag, Eye, ChevronRight, Loader2, SlidersHorizontal, X } from 'lucide-react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../components/useAuth';
@@ -8,6 +8,7 @@ import { useStore } from '../hooks/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import QuickView from '../components/QuickView';
 import Breadcrumb from '../components/Breadcrumb';
+import AttributeBadges from '../components/AttributeBadges';
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -139,19 +140,23 @@ const Shop = () => {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        const dbProducts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(
+      q,
+      (snap) => {
+        const dbProducts = snap.docs.map((docSnap) => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+        }));
         setProducts(dbProducts);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Real-time products listen error:", error);
         setLoading(false);
       }
-    };
-    fetchProducts();
+    );
+    return () => unsubscribe();
   }, []);
 
   const { addToCart, addToWishlist, isInCart, isInWishlist } = useStore();
@@ -191,7 +196,13 @@ const Shop = () => {
   };
 
   const filteredProducts = products.filter(p => {
-    const matchesSearch = (p.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const term = searchTerm.toLowerCase();
+    const matchesSearch =
+      !searchTerm ||
+      (p.name || '').toLowerCase().includes(term) ||
+      (p.subCategory || '').toLowerCase().includes(term) ||
+      (p.description || '').toLowerCase().includes(term) ||
+      (p.tags || []).some(t => String(t).toLowerCase().includes(term));
     
     let matchesCategory = false;
     if (selectedCategory === 'All') {
@@ -199,12 +210,15 @@ const Shop = () => {
     } else {
       const targetCat = selectedCategory.toLowerCase().replace(/[^a-z0-9]/g, '');
       const prodCat = (p.category || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const prodSubCat = (p.subCategory || '').toLowerCase().replace(/[^a-z0-9]/g, '');
       const prodName = (p.name || '').toLowerCase();
       const prodDesc = (p.description || '').toLowerCase();
       const prodTags = (p.tags || []).map(t => String(t).toLowerCase());
 
       matchesCategory = prodCat.includes(targetCat) ||
                         targetCat.includes(prodCat) ||
+                        prodSubCat.includes(targetCat) ||
+                        targetCat.includes(prodSubCat) ||
                         prodName.includes(selectedCategory.toLowerCase()) ||
                         prodDesc.includes(selectedCategory.toLowerCase()) ||
                         prodTags.some(t => t.includes(selectedCategory.toLowerCase()));
@@ -484,21 +498,17 @@ const Shop = () => {
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                         
-                        {/* Badges */}
-                        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
+                        {/* Badges & Attributes */}
+                        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10 max-w-[70%]">
+                          <AttributeBadges attributes={product.attributes} />
                           {isSale && (
-                            <span className="bg-[#b13896] text-white px-2 py-1 rounded-md text-[9px] font-bold tracking-wider">
+                            <span className="bg-[#b13896] text-white px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wider w-max">
                               -{Math.round(((original_price - price) / original_price) * 100)}%
                             </span>
                           )}
                           {stock <= 0 && (
-                            <span className="bg-[#161114] text-white px-2 py-1 rounded-md text-[9px] font-bold tracking-wider">
+                            <span className="bg-[#161114] text-white px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wider w-max">
                               Sold Out
-                            </span>
-                          )}
-                          {hasVariants && (
-                            <span className="bg-[#571c4c] text-white px-2 py-1 rounded-md text-[9px] font-bold tracking-wider uppercase">
-                              Sizing Options
                             </span>
                           )}
                         </div>

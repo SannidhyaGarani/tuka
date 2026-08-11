@@ -37,6 +37,7 @@ import {
   ChevronUp,
   Grid2X2,
   Tags,
+  Layers,
   Layers3,
   Globe2,
   TicketPercent,
@@ -60,14 +61,19 @@ import MediaLibrary from "./components/MediaLibrary";
 import DashboardOverview from "./components/DashboardOverview";
 import ProductEditor from "./components/ProductEditor";
 import CatalogManager from "./components/CatalogManager";
+import CategorySubcategoryManager from "./components/CategorySubcategoryManager";
+import StockManager from "./components/StockManager";
+import HomepageManager from "./components/HomepageManager";
 import { listenToProducts, removeProduct, sortNewestProducts } from "../../services/productService";
 
-// ─── Sidebar Items (Brands → Countries) ─────────────────────────────────────
+// ─── Sidebar Items ─────────────────────────────────────
 const sidebarItems = [
   { name: "Dashboard", icon: LayoutDashboard, desc: "Overview" },
   { name: "Products", icon: Package, desc: "Catalog" },
+  { name: "Stock Manager", icon: Layers, desc: "Stock Control" },
   { name: "Orders", icon: ShoppingBag, desc: "Transactions" },
   { name: "Categories", icon: List, desc: "Structure" },
+  { name: "Homepage Manager", icon: Image, desc: "Layout & Banners" },
   { name: "Users", icon: Users, desc: "Accounts" },
   { name: "Media", icon: Image, desc: "Assets" },
 ];
@@ -249,6 +255,12 @@ const Admin = () => {
           </>
         );
       }
+      case "Stock Manager":
+      case "StockManager":
+        return <StockManager />;
+      case "Homepage Manager":
+      case "HomepageManager":
+        return <HomepageManager />;
       case "Orders":
         return (
           <>
@@ -257,9 +269,9 @@ const Admin = () => {
           </>
         );
       case "Categories":
-        return <CatalogManager type="Categories" />;
+        return <CategorySubcategoryManager initialTab="Categories" />;
       case "SubCategories":
-        return <CatalogManager type="SubCategories" />;
+        return <CategorySubcategoryManager initialTab="Subcategories" />;
       case "Collections":
         return <CatalogManager type="Collections" />;
 // case "Countries":
@@ -358,12 +370,12 @@ const Admin = () => {
           </div>
         )}
 
-        {/* Catalog entries: Categories, Sub Categories, Collections, Countries, Attributes, Media */}
+        {/* Catalog entries: Stock Manager, Categories, Sub Categories, Collections, Attributes, Media */}
         {[
+          ["Stock Manager", Layers, "StockManager"],
           ["Categories", Layers3, "Categories"],
           ["Sub Categories", Layers3, "SubCategories"],
           ["Collections", Layers3, "Collections"],
-          // ["Countries", Globe2, "Countries"],
           ["Attributes", Tags, "Attributes"],
           ["Media", Images, "Media"],
         ].map(([title, Icon, target]) => (
@@ -373,7 +385,7 @@ const Admin = () => {
               title={title}
               className={`flex w-full items-center rounded-lg transition-all ${
                 collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2"
-              } ${activeItem === target ? "bg-[#a4143e] text-white" : "text-white/80 hover:bg-white/10"}`}
+              } ${activeItem === target ? "bg-[#a4143e] text-white font-bold" : "text-white/80 hover:bg-white/10"}`}
             >
               <Icon size={15} />
               {!collapsed && <span className="flex-1 text-left">{title}</span>}
@@ -383,9 +395,15 @@ const Admin = () => {
 
         {!collapsed && (
           <>
-            <p className="mb-2 mt-4 px-3 text-[9px] font-medium tracking-wide text-white/50">CONTENT</p>
-            {[["Pages", FileText], ["Banners", Images]].map(([label, Icon]) => (
-              <button key={label} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-white/80 hover:bg-white/10">
+            <p className="mb-2 mt-4 px-3 text-[9px] font-medium tracking-wide text-white/50">CONTENT & HOMEPAGE</p>
+            {[["Homepage Manager", Images, "HomepageManager"], ["Banners & Media", Images, "Media"]].map(([label, Icon, target]) => (
+              <button
+                key={label}
+                onClick={() => setActiveItem(target)}
+                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 transition-all ${
+                  activeItem === target ? "bg-[#a4143e] text-white font-bold" : "text-white/80 hover:bg-white/10"
+                }`}
+              >
                 <Icon size={15} />{label}
               </button>
             ))}
@@ -394,8 +412,15 @@ const Admin = () => {
         {collapsed && (
           <>
             <div className="my-2 border-t border-white/10" />
-            {[["Pages", FileText], ["Banners", Images]].map(([label, Icon]) => (
-              <button key={label} title={label} className="flex w-full items-center justify-center rounded-lg px-2 py-2.5 text-white/80 hover:bg-white/10 mt-1">
+            {[["Homepage Manager", Images, "HomepageManager"], ["Banners & Media", Images, "Media"]].map(([label, Icon, target]) => (
+              <button
+                key={label}
+                title={label}
+                onClick={() => setActiveItem(target)}
+                className={`flex w-full items-center justify-center rounded-lg px-2 py-2.5 transition-all mt-1 ${
+                  activeItem === target ? "bg-[#a4143e] text-white" : "text-white/80 hover:bg-white/10"
+                }`}
+              >
                 <Icon size={15} />
               </button>
             ))}

@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../Firebase';
 
 const EditorialBanner = () => {
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "settings", "homepage"), (snap) => {
+      if (snap.exists()) setSettings(snap.data());
+    });
+    return () => unsub();
+  }, []);
+
+  const bgImg = settings?.editorialImage || "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1200&auto=format&fit=crop&q=80";
+
   return (
     <section className="px-4 lg:px-10 py-16 bg-[#FDFAF5]">
       <div className="relative w-full h-[550px] md:h-[600px] lg:h-[750px] rounded-[32px] md:rounded-[48px] overflow-hidden group border border-[#C9A96E]/20 shadow-[0_20px_50px_rgba(44,26,14,0.08)]">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <img 
-            src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1200&auto=format&fit=crop&q=80" 
-            alt="Diamonds Macro"
+            src={bgImg} 
+            alt="Editorial Banner"
             className="w-full h-full object-cover transition-transform duration-[8s] group-hover:scale-110 opacity-60"
           />
           {/* Light-themed Gradient Overlay */}

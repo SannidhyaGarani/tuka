@@ -27,6 +27,20 @@ export const StoreProvider = ({ children }) => {
     }
   }, [popupVisible, popupItem?.id, popupQuantity]);
 
+  const [liveProductsMap, setLiveProductsMap] = useState({});
+
+  // Real-time listener for all products to keep stock synced across the app
+  useEffect(() => {
+    const unsubProds = onSnapshot(collection(db, "products"), (snap) => {
+      const map = {};
+      snap.docs.forEach((docSnap) => {
+        map[docSnap.id] = { id: docSnap.id, ...docSnap.data() };
+      });
+      setLiveProductsMap(map);
+    });
+    return () => unsubProds();
+  }, []);
+
   // Sync with Firestore or LocalStorage
   useEffect(() => {
     let unsubscribeCart = () => {};
@@ -219,6 +233,7 @@ export const StoreProvider = ({ children }) => {
     <StoreContext.Provider value={{ 
       cartItems, 
       wishlistItems, 
+      liveProductsMap,
       cartCount: cartItems.length, 
       wishlistCount: wishlistItems.length,
       addToCart, 

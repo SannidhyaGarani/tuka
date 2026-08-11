@@ -13,41 +13,41 @@ const Footer = () => {
     {
       title: "SHOP",
       links: [
-        { name: "Sarees", href: "/shop?cat=sarees#products" },
-        { name: "Kurtis", href: "/shop?cat=kurtis#products" },
-        { name: "Dress Material", href: "/shop?cat=dress-material#products" },
-        { name: "Stoles & Dupattas", href: "/shop?cat=stoles#products" },
-        { name: "Bags", href: "/shop?cat=bags#products" },
+        { name: "Handloom Sarees", href: "/shop?cat=Saree#products" },
+        { name: "Dhaniakhali Saree", href: "/shop?q=Dhaniakhali#products" },
+        { name: "Begumpuri Saree", href: "/shop?q=Begumpuri#products" },
+        { name: "Shantipuri Saree", href: "/shop?q=Shantipuri#products" },
+        { name: "Jamdani Saree", href: "/shop?q=Jamdani#products" },
       ]
     },
     {
       title: "COLLECTIONS",
       links: [
-        { name: "Handloom Sarees", href: "/shop?cat=handloom-saree#products" },
-        { name: "Designer Blouses", href: "/shop?cat=designer-blouse#products" },
-        { name: "Khadi Sarees", href: "/shop?cat=plain-khadi#products" },
-        { name: "Silk Sarees", href: "/shop?cat=silk#products" },
-        { name: "Linen Jamdani", href: "/shop?cat=linen-jamdani#products" },
+        { name: "Hindshree Signature", href: "/shop?q=Hindshree#products" },
+        { name: "Designer Blouses", href: "/shop?cat=Designer%20Blouse#products" },
+        { name: "Boutique Collection", href: "/shop?cat=Boutique%20Collection#products" },
+        { name: "Kantha Stitch Saree", href: "/shop?q=Kantha#products" },
+        { name: "Tussar Silk Saree", href: "/shop?q=Tussar#products" },
       ]
     },
     {
-      title: "HELP",
+      title: "HELP & SUPPORT",
       links: [
         { name: "Contact Us", href: "/contact?ref=footer#reach-us" },
-        { name: "Shipping & Delivery", href: "/shipping-policy?ref=footer#shipping" },
-        { name: "Returns & Exchanges", href: "/return-policy?ref=footer#returns" },
-        { name: "FAQs", href: "/faqs?ref=footer#faqs" },
-        { name: "Size Guide", href: "/size-guide?ref=footer#size-chart" },
+        { name: "Track Your Order", href: "/account?tab=orders#track" },
+        { name: "Return Policy", href: "/return-policy?ref=footer#returns" },
+        { name: "Privacy Policy", href: "/privacy-policy?ref=footer#privacy" },
+        { name: "Terms & Conditions", href: "/terms-and-conditions?ref=footer#terms" },
       ]
     },
     {
       title: "COMPANY",
       links: [
         { name: "Our Story", href: "/about?ref=footer#our-story" },
-        { name: "New Arrivals", href: "/shop?cat=new-arrivals#products" },
-        { name: "Exclusive Offers", href: "/shop?cat=offers#products" },
-        { name: "Privacy Policy", href: "/privacy-policy?ref=footer#privacy" },
-        { name: "Terms of Service", href: "/terms-and-conditions?ref=footer#terms" },
+        { name: "All Products", href: "/shop?cat=all#products" },
+        { name: "My Account", href: "/account?ref=footer" },
+        { name: "Wishlist", href: "/wishlist?ref=footer" },
+        { name: "Cart", href: "/cart?ref=footer" },
       ]
     }
   ];
@@ -106,7 +106,7 @@ const Footer = () => {
               <div className="space-y-3 pt-1">
                 <div className="flex items-center gap-3 text-[#3D3460]/70 text-[14px]">
                   <Phone size={15} style={{ color: MAGENTA }} />
-                  <span>+91 98765 43210</span>
+                  <span>+91 62659 98887</span>
                 </div>
                 <div className="flex items-center gap-3 text-[#3D3460]/70 text-[14px]">
                   <Mail size={15} style={{ color: MAGENTA }} />
@@ -114,7 +114,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-start gap-3 text-[#3D3460]/70 text-[14px]">
                   <MapPin size={15} style={{ color: MAGENTA, marginTop: 2 }} />
-                  <span>Mumbai, Maharashtra, India</span>
+                  <span>Bengal Weaving Cluster, India</span>
                 </div>
               </div>
 
@@ -169,27 +169,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Trust Badges */}
-          <div
-            className="flex flex-wrap justify-center gap-6 py-8 mb-8 rounded-xl"
-            style={{ background: `${DARK}08`, border: `1px solid ${DARK}0c` }}
-          >
-            {[
-              '🔒 Secure Payments',
-              '🚚 Free Shipping Pan India',
-              '↩ Easy 30-Day Returns',
-              '✨ 100% Authentic Products',
-              '⭐ 4.9 Rated by 10k+ Customers',
-            ].map((badge) => (
-              <span
-                key={badge}
-                className="text-[13px] font-medium tracking-wide"
-                style={{ color: DARK }}
-              >
-                {badge}
-              </span>
-            ))}
-          </div>
 
           {/* Bottom Copyright */}
           <div className="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderColor: `${DARK}12` }}>

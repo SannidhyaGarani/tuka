@@ -51,7 +51,7 @@ const sareeData = [
     title: 'Begumpuri Saree',
     subtitle: 'The Lightweight Artistry of Begampur',
     origin: 'Begampur, Hooghly, West Bengal',
-    giTag: 'Artisanal Handloom Craft',
+    giTag: 'Handloom Craft',
     image: 'img/b.jpeg',
     tagline: 'FEATHERLIGHT TEXTURE & FISH-SCALE MOTIFS',
     story: `Hailing from the historic handloom cluster of Begampur, the Begumpuri saree is celebrated for its ethereal lightness, translucent body, and artistic "Macha chokh" (fish-scale) serrated borders. Woven using loosely twisted cotton yarns by hereditary master weavers, Begumpuri sarees represent a harmonious blend of rustic Bengali heritage and modern minimalist aesthetics. The shuttle glides effortlessly back and forth, creating an airy, cloud-like drape prized by textile connoisseurs across India and beyond.`,
@@ -69,7 +69,7 @@ const sareeData = [
       },
       {
         icon: <Award size={18} strokeWidth={1.5} />,
-        title: 'Hereditary Artisan Heritage',
+        title: 'Hereditary Weaver Heritage',
         desc: 'Preserving 300+ years of uncompromised family weaving tradition in rural Bengal.'
       },
       {
@@ -119,9 +119,9 @@ const sareeData = [
   {
     id: 'hindshree',
     title: 'Hindshree Signature Collection',
-    subtitle: 'Unbound Creativity & Artisan Innovation',
-    origin: 'Artisan Clusters, West Bengal',
-    giTag: 'Signature Artisanal Craft',
+    subtitle: 'Unbound Creativity & Handloom Innovation',
+    origin: 'Weaving Clusters, West Bengal',
+    giTag: 'Signature Handloom Craft',
     image: 'img/h.jpeg',
     tagline: 'FREEHAND ARTWORK & APPLIQUÉ NEEDLEWORK',
     story: `Hindshree is a tribute to Bengal’s rich handloom ecosystem—where ancient pit looms meet contemporary artistic experimentation. From delicate hand-painted motifs and hand-stitched appliqué art to raw, textured khadi and tissue linen glows, Hindshree celebrates the unlimited creative capacity of Bengal's master weavers and painters.`,
@@ -135,7 +135,7 @@ const sareeData = [
       {
         icon: <Palette size={18} strokeWidth={1.5} />,
         title: 'Freehand Organic Painting',
-        desc: 'Freehand motif artwork crafted with organic plant-based natural dyes by master artisans.'
+        desc: 'Freehand motif artwork crafted with organic plant-based natural dyes by master weavers.'
       },
       {
         icon: <Scissors size={18} strokeWidth={1.5} />,
@@ -162,12 +162,12 @@ const SareeShowcase = () => {
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
         
         {/* Standardized Unified Section Header */}
-        <SectionHeader
-          badgeText="BENGAL HANDLOOM LEGACY"
-          badgeIcon={<Compass />}
-          titlePrefix="Iconic Weaves of"
-          highlightText="Bengal"
-          description="Explore our curated trio of Bengal’s most treasured handloom traditions. Every saree tells a story of century-old looms, natural yarns, and master craftsmanship."
+       <SectionHeader
+          badgeText="THE BRAND PROMISE"
+          badgeIcon={<Sparkles />}
+          titlePrefix="Craftsmanship in Every"
+          highlightText="Detail"
+          description="We curate luxury ethnic pieces directly from the source — celebrating Indian heritage, weavers, and your timeless expressions."
         />
 
         {/* Quick jump tabs */}

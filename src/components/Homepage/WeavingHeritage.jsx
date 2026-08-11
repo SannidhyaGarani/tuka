@@ -19,7 +19,7 @@ const videoClips = [
   {
     id: 2,
     title: "Spindle & Bobbin",
-    desc: "Artisans spinning natural cotton threads onto small bobbins using vintage charkhas.",
+    desc: "Weavers spinning natural cotton threads onto small bobbins using vintage charkhas.",
     videoUrl: "https://res.cloudinary.com/ewqgfmrg/video/upload/v1784458201/tuka4_eiflfp.mp4",
     tag: "Thread Spinning"
   },
@@ -44,7 +44,7 @@ const heritageTools = [
   {
     id: 'artisan',
     title: "Women Weavers",
-    subtitle: "Artisans of the Loom",
+    subtitle: "Masters of the Loom",
     desc: "Bengal sarees come to life through the dexterity of women and men craftspeople who thread each spindle. They handle the intricate count alignments and hand-paint or applique details.",
     image: "https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&q=80&w=800",
     allied: "Warp Alignment"
@@ -131,7 +131,7 @@ const WeavingHeritage = () => {
             className="text-[15px] lg:text-[17px] leading-relaxed max-w-2xl mx-auto font-light text-gray-500"
             style={{ fontFamily: SANS }}
           >
-            Behind every weave lies the history of Bengal. Journey through vintage Kolkata, the rhythm of the wooden pit loom, and the artisan instruments that forge our heirloom sarees.
+            Behind every weave lies the history of Bengal. Journey through vintage Kolkata, the rhythm of the wooden pit loom, and the traditional instruments that forge our heirloom sarees.
           </p>
         </motion.div>
 

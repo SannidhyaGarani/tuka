@@ -11,7 +11,7 @@ const Breadcrumb = ({
   subtitle, 
   bgImage = "https://images.unsplash.com/photo-1610030470298-40e1eaccf77d?auto=format&fit=crop&q=80&w=1600", 
   links = [],
-  badgeText = "HOUSE OF TUKA • ARTISAN WEAVES",
+  badgeText = "HOUSE OF TUKA • HANDLOOM WEAVES",
   stats = [
     { icon: Award, label: "100% Handloom" },
     { icon: ShieldCheck, label: "GI Certified" },

@@ -24,7 +24,37 @@ const Checkout = () => {
 
   const total = cartItems.reduce((sum, item) => sum + (Number(item.price) * (item.quantity || 1)), 0);
 
-  const [stockStatus, setStockStatus] = useState({});
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+
+  React.useEffect(() => {
+    if (!user) return;
+    const loadUserSavedAddresses = async () => {
+      try {
+        const uSnap = await getDoc(doc(db, "users", user.uid));
+        if (uSnap.exists()) {
+          const uData = uSnap.data();
+          const list = uData.savedAddresses || [];
+          setSavedAddresses(list);
+          const defaultAddr = list.find((a) => a.isDefault) || list[0];
+          if (defaultAddr) {
+            setSelectedAddressId(defaultAddr.id);
+            setFormData((prev) => ({
+              ...prev,
+              name: defaultAddr.fullName || prev.name,
+              phone: defaultAddr.phone || prev.phone,
+              address: defaultAddr.street || prev.address,
+              city: defaultAddr.city || prev.city,
+              pincode: defaultAddr.pincode || prev.pincode,
+            }));
+          }
+        }
+      } catch (err) {
+        console.error("Saved address fetch error:", err);
+      }
+    };
+    loadUserSavedAddresses();
+  }, [user]);
 
   React.useEffect(() => {
     const checkAllStock = async () => {
@@ -212,7 +242,7 @@ const Checkout = () => {
       <div className="min-h-screen bg-[#F8F4EF] flex flex-col items-center justify-center p-6 pt-32 text-center">
         <h1 className="text-4xl sm:text-6xl font-serif text-[#161114] mb-8 italic">Your collection is empty</h1>
         <Link to="/shop" className="px-12 py-5 bg-[#b13896] text-white font-bold rounded-2xl uppercase tracking-[0.3em] text-[14px] shadow-2xl shadow-[#b13896]/20 hover:bg-[#161114] transition-all active:scale-95">
-          Return to Atelier
+          Return to shop 
         </Link>
       </div>
     );
@@ -287,11 +317,59 @@ const Checkout = () => {
             </section>
 
             {/* Step 2: Shipping */}
-            <section className="space-y-10">
-              <div className="flex items-center gap-6">
-                <span className="w-12 h-12 rounded-full bg-[#b13896] text-white flex items-center justify-center font-serif text-xl shadow-xl shadow-[#b13896]/20">2</span>
-                <h2 className="text-3xl font-serif text-[#161114]">Destination Atelier</h2>
+            <section className="space-y-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-6">
+                  <span className="w-12 h-12 rounded-full bg-[#b13896] text-white flex items-center justify-center font-serif text-xl shadow-xl shadow-[#b13896]/20">2</span>
+                  <h2 className="text-3xl font-serif text-[#161114]">Destination Atelier</h2>
+                </div>
+                {savedAddresses.length > 0 && (
+                  <span className="text-xs font-bold text-[#b13896] bg-rose-50 px-3 py-1 rounded-full uppercase tracking-wider">
+                    {savedAddresses.length} Saved Location{savedAddresses.length > 1 ? 's' : ''}
+                  </span>
+                )}
               </div>
+
+              {/* Saved Address Quick Selector */}
+              {savedAddresses.length > 0 && (
+                <div className="pl-18 space-y-3">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#4a3f44] block">Select Saved Address:</span>
+                  <div className="flex flex-wrap gap-3">
+                    {savedAddresses.map((addr) => {
+                      const isSelected = selectedAddressId === addr.id;
+                      return (
+                        <button
+                          type="button"
+                          key={addr.id}
+                          onClick={() => {
+                            setSelectedAddressId(addr.id);
+                            setFormData((prev) => ({
+                              ...prev,
+                              name: addr.fullName || prev.name,
+                              phone: addr.phone || prev.phone,
+                              address: addr.street || prev.address,
+                              city: addr.city || prev.city,
+                              pincode: addr.pincode || prev.pincode,
+                            }));
+                          }}
+                          className={`p-3.5 rounded-2xl text-xs text-left border transition-all cursor-pointer flex-1 min-w-[200px] ${
+                            isSelected
+                              ? 'bg-white border-[#b13896] ring-2 ring-[#b13896]/20 shadow-md'
+                              : 'bg-white/50 border-[#e5d5df]/60 hover:bg-white hover:border-[#b13896]/40'
+                          }`}
+                        >
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="font-bold text-slate-900">{addr.fullName}</span>
+                            {addr.isDefault && <span className="text-[9px] font-bold uppercase text-[#b13896] bg-rose-50 px-2 py-0.5 rounded-full">Default</span>}
+                          </div>
+                          <p className="text-[11px] text-slate-500 line-clamp-1">{addr.street}, {addr.city}</p>
+                          <p className="text-[11px] font-bold text-slate-700 mt-1">Pincode: {addr.pincode}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               <div className="grid md:grid-cols-2 gap-8 pl-18">
                 <div className="space-y-3 md:col-span-2">

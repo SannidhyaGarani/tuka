@@ -84,7 +84,7 @@ const Signup = () => {
 
         {/* Mobile logo */}
         <Link to="/" className="lg:hidden mb-10">
-          <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-9" style={{ filter: 'brightness(0)' }} />
+          <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-9" style={{ filter: 'brightness(0) invert(1)' }} />
         </Link>
 
         <motion.div

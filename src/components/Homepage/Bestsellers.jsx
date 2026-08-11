@@ -1,13 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import { Loader2, ShoppingBag, Heart, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
-import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '../Firebase';
 import { useStore } from '../../hooks/useStore';
 import SectionHeader from './SectionHeader';
+import AttributeBadges from '../AttributeBadges';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -28,21 +29,21 @@ const BestSellers = () => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
-  React.useEffect(() => {
-    const fetchBestsellers = async () => {
-      try {
-        const q = query(collection(db, "products"), orderBy("createdAt", "desc"), limit(8));
-        const snap = await getDocs(q);
-        const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  useEffect(() => {
+    const q = query(collection(db, "products"), orderBy("createdAt", "desc"), limit(8));
+    const unsubscribe = onSnapshot(
+      q,
+      (snap) => {
+        const list = snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
         setProducts(list);
-      } catch (e) {
-        console.error("Error fetching bestsellers:", e);
-        setProducts([]);
-      } finally {
+        setLoading(false);
+      },
+      (e) => {
+        console.error("Error listening to bestsellers:", e);
         setLoading(false);
       }
-    };
-    fetchBestsellers();
+    );
+    return () => unsubscribe();
   }, []);
 
   const { addToCart, addToWishlist, isInCart, isInWishlist } = useStore();
@@ -91,7 +92,7 @@ const BestSellers = () => {
           badgeIcon={<Sparkles />}
           titlePrefix="Most"
           highlightText="Loved"
-          description="Our customers' favorite picks — handpicked ethnic fashion from across India's finest artisan workshops."
+          description="Our customers' favorite picks — handpicked ethnic fashion from across India's finest handloom workshops."
           className="mb-6"
         />
 
@@ -123,8 +124,8 @@ const BestSellers = () => {
         <div className="relative">
           <Swiper
             modules={[Navigation]}
-            spaceBetween={24}
-            slidesPerView={1.2}
+            spaceBetween={16}
+            slidesPerView={1.35}
             navigation={{
               prevEl: prevRef.current,
               nextEl: nextRef.current,
@@ -134,10 +135,10 @@ const BestSellers = () => {
               swiper.params.navigation.nextEl = nextRef.current;
             }}
             breakpoints={{
-              480: { slidesPerView: 2 },
-              768: { slidesPerView: 2.8 },
-              1024: { slidesPerView: 3.5 },
-              1280: { slidesPerView: 4.2 },
+              480: { slidesPerView: 2, spaceBetween: 20 },
+              768: { slidesPerView: 2.8, spaceBetween: 24 },
+              1024: { slidesPerView: 3.5, spaceBetween: 24 },
+              1280: { slidesPerView: 4.2, spaceBetween: 24 },
             }}
             className="!overflow-visible"
           >
@@ -176,6 +177,11 @@ const BestSellers = () => {
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
                       />
+
+                      {/* Top floating attribute badges */}
+                      <div className="absolute top-3 left-3 z-10 max-w-[65%]">
+                        <AttributeBadges attributes={product.attributes} />
+                      </div>
 
                       {/* Top floating wishlist button */}
                       <button

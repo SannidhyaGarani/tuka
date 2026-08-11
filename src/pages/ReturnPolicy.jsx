@@ -107,7 +107,7 @@ const ReturnPolicy = () => {
           </div>
 
           <div className="pt-24 border-t border-[#e5d5df]/30 text-center">
-            <p className="text-[14px] tracking-[0.5em] uppercase text-[#4a3f44]/30 font-bold">© 2026 TUKA. Artisans of Luxury.</p>
+            <p className="text-[14px] tracking-[0.5em] uppercase text-[#4a3f44]/30 font-bold">© 2026 TUKA. Handloom Heritage & Fine Tailoring.</p>
           </div>
         </motion.div>
       </div>

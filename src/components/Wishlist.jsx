@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
 import { db } from "./Firebase";
-import { collection, getDocs, doc, deleteDoc, addDoc, getDoc } from "firebase/firestore";
+import { collection, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 import { Heart, Trash2, ShoppingCart, ArrowLeft, Star, Loader2, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,45 +11,40 @@ import Breadcrumb from "./Breadcrumb";
 const Wishlist = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { addToCart } = useStore();
-  const [items, setItems] = useState([]);
+  const { addToCart, liveProductsMap } = useStore();
+  const [wishlistRaw, setWishlistRaw] = useState([]);
   const [loading, setLoading] = useState(true);
   const [movingItems, setMovingItems] = useState({});
 
   useEffect(() => {
-    const load = async () => {
-      if (!user) {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    const wishRef = collection(db, "users", user.uid, "wishlist");
+    const unsubscribe = onSnapshot(
+      wishRef,
+      (snap) => {
+        const records = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        setWishlistRaw(records);
         setLoading(false);
-        return;
-      }
-      try {
-        const snap = await getDocs(collection(db, "users", user.uid, "wishlist"));
-        const wishlistRecords = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-
-        // Fetch live product data for actual prices & stocks
-        const liveItems = [];
-        for (const record of wishlistRecords) {
-          const pRef = doc(db, "products", record.id);
-          const pSnap = await getDoc(pRef);
-          if (pSnap.exists()) {
-            liveItems.push({
-              ...pSnap.data(),
-              id: pSnap.id
-            });
-          } else {
-            // Silently clean up if deleted
-            await deleteDoc(doc(db, "users", user.uid, "wishlist", record.id));
-          }
-        }
-        setItems(liveItems);
-      } catch (error) {
-        console.error("Error loading wishlist:", error);
-      } finally {
+      },
+      (error) => {
+        console.error("Wishlist snapshot error:", error);
         setLoading(false);
       }
-    };
-    load();
+    );
+    return () => unsubscribe();
   }, [user]);
+
+  // Combine wishlist records with live real-time product stock & details
+  const items = wishlistRaw.map((record) => {
+    const liveProduct = liveProductsMap[record.id];
+    if (liveProduct) {
+      return { ...record, ...liveProduct, id: record.id };
+    }
+    return record;
+  });
 
   const removeItem = async (id) => {
     if (!user) return;
@@ -200,7 +195,7 @@ const Wishlist = () => {
                     {/* Content */}
                     <div className="space-y-4 px-2 text-center">
                       <div className="space-y-1">
-                        <p className="text-[14px] tracking-[0.3em] font-bold uppercase text-[#4a3f44] mb-2">{item.brand || "Tuka Atelier"}</p>
+                        <p className="text-[14px] tracking-[0.3em] font-bold uppercase text-[#4a3f44] mb-2">{item.brand || "Tuka "}</p>
                         <h3 className="text-xl font-serif text-[#161114] group-hover:text-[#b13896] transition-colors duration-300">
                           {item.name}
                         </h3>

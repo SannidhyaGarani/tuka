@@ -13,7 +13,7 @@ const AtelierService = () => {
     },
     {
       id: "02",
-      title: "Artisanal Restoration",
+      title: "Handloom Restoration",
       description: "Preserve the legacy of your most cherished heirlooms. Our atelier specializes in reviving the brilliance of antique and vintage pieces.",
       icon: <Award strokeWidth={1} size={28} />
     },
@@ -41,7 +41,7 @@ const AtelierService = () => {
             >
               <img
                 src="https://images.unsplash.com/photo-1608042314453-ae338d80c427?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjN8fGpld2Vscnl8ZW58MHx8MHx8fDA%3D"
-                alt="Master Artisan at Work"
+                alt="Master Craftsman at Work"
                 className="w-full h-full object-cover opacity-85 transition-transform duration-[8s] group-hover:scale-108 group-hover:opacity-95"
               />
               {/* Floating Mini-Card */}

@@ -1,17 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Instagram, ArrowRight } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../Firebase';
 
-const galleryItems = [
+const DEFAULT_GALLERY = [
   { id: 1, image: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=600&auto=format&fit=crop', handle: '@tuka_official' },
-  { id: 2, image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop', handle: '@isabelle.m' },
-  { id: 3, image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop', handle: '@sophia_rossi' },
-  { id: 4, image: 'https://plus.unsplash.com/premium_photo-1681276170281-cf50a487a1b7?w=600&auto=format&fit=crop', handle: '@elenor_v' },
-  { id: 5, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=600&auto=format&fit=crop', handle: '@maria.d' },
-  { id: 6, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=600&auto=format&fit=crop', handle: '@clara.j' },
+  { id: 2, image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop', handle: '@tuka_heritage' },
+  { id: 3, image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop', handle: '@tuka_sarees' },
+  { id: 4, image: 'https://plus.unsplash.com/premium_photo-1681276170281-cf50a487a1b7?w=600&auto=format&fit=crop', handle: '@tuka_style' },
 ];
 
 const SocialGallery = () => {
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "settings", "homepage"), (snap) => {
+      if (snap.exists()) setSettings(snap.data());
+    });
+    return () => unsub();
+  }, []);
+
+  const galleryItems = [
+    { id: 1, image: settings?.galleryImage1 || DEFAULT_GALLERY[0].image, handle: '@tuka_official' },
+    { id: 2, image: settings?.galleryImage2 || DEFAULT_GALLERY[1].image, handle: '@tuka_heritage' },
+    { id: 3, image: settings?.galleryImage3 || DEFAULT_GALLERY[2].image, handle: '@tuka_sarees' },
+    { id: 4, image: settings?.galleryImage4 || DEFAULT_GALLERY[3].image, handle: '@tuka_style' },
+  ];
   return (
     <section className="bg-[#FDFAF5] py-12 lg:py-24 px-4 sm:px-8 lg:px-16 font-sans relative overflow-hidden border-t border-[#640D14]/10">
       {/* Decorative vertical lines */}

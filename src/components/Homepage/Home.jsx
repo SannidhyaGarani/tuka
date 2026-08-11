@@ -20,10 +20,10 @@ function Home() {
       <Hero />
 
       {/* 2. Infinite Ticker Announcement Marquee */}
-      <Marquee />
+      {/* <Marquee /> */}
 
       {/* 3. The Brand Promise / Craftsmanship Grid */}
-      <QualitySection />
+      {/* <QualitySection /> */}
 
       {/* 4. Iconic Weaves of Bengal - Dhaniakhali, Begumpuri, Shantipuri, Hindshree */}
       <SareeShowcase />
@@ -44,7 +44,7 @@ function Home() {
       {/* <TheEdit /> */}
 
       {/* 10. Curated Promo Slider */}
-      <PromoSlider />
+      {/* <PromoSlider /> */}
 
       {/* 11. Customer Love & Verified Buyer Reviews */}
       <TestimonialSection />

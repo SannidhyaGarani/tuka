@@ -54,8 +54,8 @@ const CategorySection = () => {
           description="Hand-curated luxury collections meticulously crafted for bridal, groom, and contemporary celebrations."
         />
 
-        {/* Categories Grid (Flush layout like the reference image) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3">
+        {/* Categories Grid (Flush desktop, ultra-premium rounded cards on mobile) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {categories.map((category, index) => (
             <motion.div
               key={category.id}
@@ -63,7 +63,7 @@ const CategorySection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="group relative overflow-hidden aspect-[2/3] w-full cursor-pointer"
+              className="group relative overflow-hidden aspect-[3/4] sm:aspect-[2/3] w-full rounded-2xl lg:rounded-none border border-black/5 shadow-md lg:shadow-none cursor-pointer"
             >
               <Link to={category.link} className="block w-full h-full relative">
 
@@ -71,27 +71,30 @@ const CategorySection = () => {
                 <img
                   src={category.image}
                   alt={category.name}
-                  className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.03]"
+                  className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]"
                 />
 
                 {/* Dark Editorial Overlay */}
                 <div
-                  className="absolute inset-0 transition-opacity duration-500 opacity-60 group-hover:opacity-75 z-10"
+                  className="absolute inset-0 transition-opacity duration-500 opacity-65 group-hover:opacity-80 z-10"
                   style={{
-                    background: 'linear-gradient(to top, rgba(22, 17, 20, 0.95) 0%, rgba(22, 17, 20, 0.4) 40%, transparent 80%)'
+                    background: 'linear-gradient(to top, rgba(22, 17, 20, 0.95) 0%, rgba(22, 17, 20, 0.35) 50%, transparent 80%)'
                   }}
                 />
 
                 {/* Subtle Hover Magenta Tint overlay */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700 z-10 pointer-events-none"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-700 z-10 pointer-events-none"
                   style={{ background: MAGENTA }}
                 />
 
                 {/* Text Overlay */}
-                <div className="absolute inset-x-0 bottom-8 z-20 flex flex-col items-center justify-center space-y-3">
+                <div className="absolute inset-x-0 bottom-6 sm:bottom-8 z-20 flex flex-col items-center justify-center space-y-2.5 px-3">
+                  <span className="text-[9px] tracking-[0.3em] font-extrabold uppercase text-[#f4cfeb] opacity-80">
+                    HERITAGE WEAVE
+                  </span>
                   <h3
-                    className="text-white text-sm lg:text-base font-semibold tracking-[0.25em] text-center transition-all duration-300 group-hover:tracking-[0.28em]"
+                    className="text-white text-xs sm:text-sm lg:text-base font-semibold tracking-[0.2em] text-center transition-all duration-300 group-hover:tracking-[0.25em]"
                     style={{ fontFamily: SANS }}
                   >
                     {category.name}
@@ -99,7 +102,7 @@ const CategorySection = () => {
 
                   {/* Subtle growing boundary line */}
                   <span
-                    className="h-[1px] w-0 group-hover:w-8 transition-all duration-500 ease-out"
+                    className="h-[1.5px] w-6 group-hover:w-10 transition-all duration-500 ease-out"
                     style={{ background: MAGENTA }}
                   />
                 </div>

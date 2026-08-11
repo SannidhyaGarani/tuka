@@ -1,73 +1,259 @@
 import { useState, useEffect } from "react";
-import { collection, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../../../components/Firebase";
 
 export const DEFAULT_CATEGORIES = [
+  "Saree",
   "Handloom Saree",
   "Designer Blouse",
-  "Saree",
   "Boutique Collection",
   "Kurtis",
   "Stoles",
   "Dress material",
-  "New Arrivals"
+  "New Arrivals",
 ];
 
-export const DEFAULT_SUBCATEGORIES = [
-  "Cotton",
-  "Khadi",
-  "Silk",
-  "Linen",
-  "Jamdani",
-  "Baluchari",
-  "Dhaniakhali",
-  "Begumpuri",
-  "Shantipuri",
-  "Appliqué",
-  "Mul Cotton",
-  "Tussar Silk",
-  "Chanderi"
+export const DEFAULT_SUBCATEGORIES_DATA = [
+  { name: "Dhaniakhali Saree", category: "Saree", description: "Traditional Bengal Dhaniakhali cotton weave with fine border work" },
+  { name: "Begumpuri Saree", category: "Saree", description: "Lightweight woven Begumpuri cotton saree with handloom motif" },
+  { name: "Shantipuri Saree", category: "Saree", description: "Fine texture Shantipuri woven cotton saree" },
+  { name: "Hindshree Signature", category: "Saree", description: "Exclusive Hindshree luxury heritage handloom signature saree" },
+  { name: "Jamdani Saree", category: "Saree", description: "Royal Jamdani hand-woven motif pattern saree" },
+  { name: "Baluchari Saree", category: "Saree", description: "Mythological scene woven silk saree" },
+  { name: "Kantha Stitch Saree", category: "Saree", description: "Handcrafted Bengal Kantha running stitch embroidery" },
+  { name: "Tussar Silk Saree", category: "Saree", description: "Rich textured wild silk handloom saree" },
+  { name: "Linen Saree", category: "Saree", description: "Pure organic breathable linen saree" },
+  { name: "Organic Cotton Saree", category: "Saree", description: "Soft eco-friendly organic handloom cotton saree" },
+  { name: "Chanderi Saree", category: "Saree", description: "Sheer texture gloss finish Chanderi weave" },
+  { name: "Kanjeevaram Saree", category: "Saree", description: "South Indian temple border pure silk saree" },
+  { name: "Organza Saree", category: "Saree", description: "Lightweight sheer crisp floral organza weave" },
+  { name: "Tissue Saree", category: "Saree", description: "Metallic sheen luxury party wear saree" },
+  { name: "Phulia Saree", category: "Saree", description: "Soft breathable Phulia cotton handloom weave" },
+  { name: "Garad Saree", category: "Saree", description: "Sacred white & red border silk saree" },
+  { name: "Taant Saree", category: "Saree", description: "Classic crisp Bengali cotton daily wear saree" },
+  { name: "Muslin Saree", category: "Saree", description: "Ultra-fine lightweight heritage sheer muslin saree" },
+  { name: "Cotton", category: "", description: "General Cotton Weaves" },
+  { name: "Khadi", category: "", description: "Handspun Khadi" },
+  { name: "Silk", category: "", description: "Pure Silk Weaves" },
+  { name: "Appliqué", category: "", description: "Appliqué Work" },
 ];
+
+export const DEFAULT_SUBCATEGORIES = DEFAULT_SUBCATEGORIES_DATA.map((s) => s.name);
 
 export const DEFAULT_BRANDS = ["Tuka", "Boutique"];
 
+export const DEFAULT_ATTRIBUTES = [
+  "Deal",
+  "Hot",
+  "Sale",
+  "Trending",
+  "New Arrival",
+  "Exclusive",
+  "Handmade",
+  "Limited Edition",
+  "Bestseller"
+];
+
 export const useCatalogData = () => {
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
+  const [categoryObjects, setCategoryObjects] = useState([]);
   const [subCategories, setSubCategories] = useState(DEFAULT_SUBCATEGORIES);
+  const [subCategoryObjects, setSubCategoryObjects] = useState([]);
   const [brands, setBrands] = useState(DEFAULT_BRANDS);
+  const [attributes, setAttributes] = useState(DEFAULT_ATTRIBUTES);
+  const [attributeObjects, setAttributeObjects] = useState([]);
 
   useEffect(() => {
+    // 1. Listen to Categories
     const unsubCat = onSnapshot(collection(db, "categories"), (snap) => {
-      const dbCats = snap.docs.map((doc) => doc.data().name).filter(Boolean);
-      const merged = Array.from(new Set([...DEFAULT_CATEGORIES, ...dbCats]));
-      setCategories(merged);
+      const dbCats = snap.docs.map((docSnap) => ({
+        id: docSnap.id,
+        ...docSnap.data(),
+      }));
+
+      const dbNames = dbCats.map((c) => c.name).filter(Boolean);
+      const mergedNames = Array.from(new Set([...DEFAULT_CATEGORIES, ...dbNames]));
+
+      // Create category objects combining Firestore and defaults
+      const combinedObjects = [...dbCats];
+      DEFAULT_CATEGORIES.forEach((defName) => {
+        if (!combinedObjects.some((c) => c.name?.toLowerCase() === defName.toLowerCase())) {
+          combinedObjects.push({ name: defName, status: "Active", isDefault: true });
+        }
+      });
+
+      setCategories(mergedNames);
+      setCategoryObjects(combinedObjects);
     });
 
+    // 2. Listen to Subcategories
     const unsubSub = onSnapshot(collection(db, "subcategories"), (snap) => {
-      const dbSubs = snap.docs.map((doc) => doc.data().name).filter(Boolean);
-      const merged = Array.from(new Set([...DEFAULT_SUBCATEGORIES, ...dbSubs]));
-      setSubCategories(merged);
+      const dbSubs = snap.docs.map((docSnap) => ({
+        id: docSnap.id,
+        ...docSnap.data(),
+      }));
+
+      const dbNames = dbSubs.map((s) => s.name).filter(Boolean);
+      const mergedNames = Array.from(new Set([...DEFAULT_SUBCATEGORIES, ...dbNames]));
+
+      const combinedObjects = [...dbSubs];
+      DEFAULT_SUBCATEGORIES_DATA.forEach((defSub) => {
+        if (!combinedObjects.some((s) => s.name?.toLowerCase() === defSub.name.toLowerCase())) {
+          combinedObjects.push({
+            name: defSub.name,
+            category: defSub.category,
+            description: defSub.description,
+            status: "Active",
+            isDefault: true,
+          });
+        }
+      });
+
+      setSubCategories(mergedNames);
+      setSubCategoryObjects(combinedObjects);
     });
 
+    // 3. Listen to Brands
     const unsubBrand = onSnapshot(collection(db, "brands"), (snap) => {
       const dbBrands = snap.docs.map((doc) => doc.data().name).filter(Boolean);
       const merged = Array.from(new Set([...DEFAULT_BRANDS, ...dbBrands]));
       setBrands(merged);
     });
 
+    // 4. Listen to Attributes
+    const unsubAttr = onSnapshot(collection(db, "attributes"), (snap) => {
+      const dbAttrs = snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+      const dbNames = dbAttrs.map((a) => a.name).filter(Boolean);
+      const mergedNames = Array.from(new Set([...DEFAULT_ATTRIBUTES, ...dbNames]));
+      setAttributes(mergedNames);
+      setAttributeObjects(dbAttrs);
+    });
+
+    // Seed missing defaults into Firestore if desired
+    const seedDefaults = async () => {
+      try {
+        const catSnap = await getDocs(collection(db, "categories"));
+        const existingCatNames = catSnap.docs.map((d) => d.data().name?.toLowerCase()).filter(Boolean);
+        for (const catName of DEFAULT_CATEGORIES) {
+          if (!existingCatNames.includes(catName.toLowerCase())) {
+            await addDoc(collection(db, "categories"), {
+              name: catName,
+              description: `${catName} collection`,
+              status: "Active",
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            });
+          }
+        }
+
+        const subSnap = await getDocs(collection(db, "subcategories"));
+        const existingSubNames = subSnap.docs.map((d) => d.data().name?.toLowerCase()).filter(Boolean);
+        for (const subItem of DEFAULT_SUBCATEGORIES_DATA) {
+          if (!existingSubNames.includes(subItem.name.toLowerCase())) {
+            await addDoc(collection(db, "subcategories"), {
+              name: subItem.name,
+              category: subItem.category || "Saree",
+              description: subItem.description || "",
+              status: "Active",
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            });
+          }
+        }
+
+        const attrSnap = await getDocs(collection(db, "attributes"));
+        const existingAttrNames = attrSnap.docs.map((d) => d.data().name?.toLowerCase()).filter(Boolean);
+        for (const attrName of DEFAULT_ATTRIBUTES) {
+          if (!existingAttrNames.includes(attrName.toLowerCase())) {
+            await addDoc(collection(db, "attributes"), {
+              name: attrName,
+              description: `${attrName} attribute tag`,
+              status: "Active",
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("Catalog auto-seeding notice:", err.message);
+      }
+    };
+
+    seedDefaults();
+
     return () => {
       unsubCat();
       unsubSub();
       unsubBrand();
+      unsubAttr();
     };
   }, []);
 
-  const addCategory = async (name, description = "") => {
+  const addCategory = async (name, description = "", group = "General") => {
     const trimmed = name.trim();
     if (!trimmed) return;
-    if (!categories.some((c) => c.toLowerCase() === trimmed.toLowerCase())) {
+    const exists = categoryObjects.find(
+      (c) => c.name?.toLowerCase() === trimmed.toLowerCase() && c.id
+    );
+    if (!exists) {
       await addDoc(collection(db, "categories"), {
         name: trimmed,
+        description: description.trim(),
+        group: group.trim() || "General",
+        status: "Active",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
+  };
+
+  const addAttribute = async (name) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const exists = attributeObjects.find((a) => a.name?.toLowerCase() === trimmed.toLowerCase());
+    if (!exists) {
+      await addDoc(collection(db, "attributes"), {
+        name: trimmed,
+        description: `${trimmed} tag`,
+        status: "Active",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    }
+  };
+
+  const updateCategory = async (id, data) => {
+    if (!id) return;
+    await updateDoc(doc(db, "categories", id), {
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
+  };
+
+  const deleteCategory = async (id) => {
+    if (!id) return;
+    await deleteDoc(doc(db, "categories", id));
+  };
+
+  const addSubCategory = async (name, category = "", description = "") => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const exists = subCategoryObjects.find(
+      (s) => s.name?.toLowerCase() === trimmed.toLowerCase() && s.id
+    );
+    if (!exists) {
+      await addDoc(collection(db, "subcategories"), {
+        name: trimmed,
+        category: category || "",
         description: description.trim(),
         status: "Active",
         createdAt: serverTimestamp(),
@@ -76,25 +262,48 @@ export const useCatalogData = () => {
     }
   };
 
-  const addSubCategory = async (name, category = "") => {
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    if (!subCategories.some((s) => s.toLowerCase() === trimmed.toLowerCase())) {
-      await addDoc(collection(db, "subcategories"), {
-        name: trimmed,
-        category: category || "",
-        status: "Active",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
-    }
+  const updateSubCategory = async (id, data) => {
+    if (!id) return;
+    await updateDoc(doc(db, "subcategories", id), {
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
+  };
+
+  const deleteSubCategory = async (id) => {
+    if (!id) return;
+    await deleteDoc(doc(db, "subcategories", id));
+  };
+
+  // Helper to get subcategories for a given category name
+  const getSubcategoriesForCategory = (catName) => {
+    if (!catName) return subCategories;
+    const matching = subCategoryObjects.filter(
+      (s) =>
+        s.category?.toLowerCase() === catName.toLowerCase() ||
+        !s.category ||
+        s.name?.toLowerCase().includes(catName.toLowerCase()) ||
+        catName.toLowerCase().includes(s.name?.split(" ")[0].toLowerCase())
+    );
+    return matching.length > 0 ? matching.map((s) => s.name) : subCategories;
   };
 
   return {
     categories,
+    categoryObjects,
     subCategories,
+    subCategoryObjects,
     brands,
+    attributes,
+    attributeObjects,
     addCategory,
+    updateCategory,
+    deleteCategory,
     addSubCategory,
+    updateSubCategory,
+    deleteSubCategory,
+    addAttribute,
+    getSubcategoriesForCategory,
   };
 };
+

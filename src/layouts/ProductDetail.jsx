@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { db } from "../components/Firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { useAuth } from "../components/useAuth";
 import { useStore } from '../hooks/useStore';
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,6 +10,7 @@ import {
   ArrowLeft, Share2, Gem, Sparkles, ArrowRight, Loader2, ChevronRight, Package, Clock
 } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
+import AttributeBadges from '../components/AttributeBadges';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -40,38 +41,48 @@ const ProductDetail = () => {
   const curatedProducts = [];
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setSelectedImageIndex(0);
-      const urlSize = searchParams.get('size') || searchParams.get('variant');
-      const curated = curatedProducts.find(p => String(p.id) === String(id));
-      if (curated) {
-        setProduct(curated);
-        if (curated.sizeVariants && curated.sizeVariants.length > 0) {
-          const match = urlSize ? curated.sizeVariants.find(v => v.size.toLowerCase() === urlSize.toLowerCase()) : null;
-          setSelectedSize(match || curated.sizeVariants[0]);
-        }
-        setLoading(false);
-        return;
+    setLoading(true);
+    setSelectedImageIndex(0);
+    const urlSize = searchParams.get('size') || searchParams.get('variant');
+    const curated = curatedProducts.find(p => String(p.id) === String(id));
+    if (curated) {
+      setProduct(curated);
+      if (curated.sizeVariants && curated.sizeVariants.length > 0) {
+        const match = urlSize ? curated.sizeVariants.find(v => v.size.toLowerCase() === urlSize.toLowerCase()) : null;
+        setSelectedSize(match || curated.sizeVariants[0]);
       }
-      try {
-        const ref = doc(db, "products", id);
-        const snap = await getDoc(ref);
+      setLoading(false);
+      return;
+    }
+
+    const ref = doc(db, "products", id);
+    const unsubscribe = onSnapshot(
+      ref,
+      (snap) => {
         if (snap.exists()) {
           const data = { id: snap.id, ...snap.data() };
           setProduct(data);
           if (data.sizeVariants && data.sizeVariants.length > 0) {
-            const match = urlSize ? data.sizeVariants.find(v => v.size.toLowerCase() === urlSize.toLowerCase()) : null;
-            const inStockVariant = data.sizeVariants.find(v => Number(v.stock || 0) > 0);
-            setSelectedSize(match || inStockVariant || data.sizeVariants[0]);
+            setSelectedSize((prevSelected) => {
+              if (prevSelected) {
+                const updatedMatch = data.sizeVariants.find(v => v.size === prevSelected.size);
+                if (updatedMatch) return updatedMatch;
+              }
+              const match = urlSize ? data.sizeVariants.find(v => v.size.toLowerCase() === urlSize.toLowerCase()) : null;
+              const inStockVariant = data.sizeVariants.find(v => Number(v.stock || 0) > 0);
+              return match || inStockVariant || data.sizeVariants[0];
+            });
           }
         }
-      } catch (e) {
-        console.error("Firebase error:", e);
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Firebase product detail snapshot error:", error);
+        setLoading(false);
       }
-      setLoading(false);
-    };
-    load();
+    );
+
+    return () => unsubscribe();
   }, [id, searchParams]);
 
   const { addToCart, addToWishlist, isInCart, isInWishlist } = useStore();
@@ -118,9 +129,9 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FDFAF5] flex flex-col items-center justify-center gap-4">
-        <div className="w-8 h-8 border-[1.5px] border-[#b13896] border-t-transparent rounded-full animate-spin" />
-        <p className="text-[14px] uppercase tracking-[0.5em] text-[#b13896] font-bold">Loading</p>
+      <div className="min-h-screen bg-[#161114] flex flex-col items-center justify-center gap-4">
+        <div className="w-10 h-10 border-2 border-[#b13896] border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(177,56,150,0.5)]" />
+        <p className="text-[12px] uppercase tracking-[0.4em] text-[#f4cfeb] font-bold">Unveiling Masterpiece...</p>
       </div>
     );
   }
@@ -232,8 +243,9 @@ const ProductDetail = () => {
           <div className="w-full lg:w-[45%] py-2">
             <div className="space-y-6">
 
-              {/* Category & Name */}
+              {/* Attributes, Category & Name */}
               <div>
+                <AttributeBadges attributes={product.attributes} className="mb-3" />
                 <p className="text-[14px] tracking-[0.3em] font-bold uppercase text-[#b13896] mb-3">
                   {product.category || 'Tuka Heritage'}
                 </p>

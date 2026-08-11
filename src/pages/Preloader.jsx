@@ -41,13 +41,13 @@ const PremiumPreloader = ({ onComplete }) => {
             y: "-100%",
             transition: { duration: 1.5, ease: [0.77, 0, 0.175, 1] }
           }}
-          className="fixed inset-0 z-[9999] bg-[#FDFAF5] flex flex-col items-center justify-center overflow-hidden selection:bg-none"
+          className="fixed inset-0 z-[9999] bg-[#161114] text-white flex flex-col items-center justify-center overflow-hidden selection:bg-none"
         >
           {/* Subtle Caustics */}
           <motion.div
             animate={{
               scale: [1, 1.1, 1],
-              opacity: [0.03, 0.08, 0.03],
+              opacity: [0.05, 0.15, 0.05],
               rotate: [0, 2, 0]
             }}
             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
@@ -59,7 +59,7 @@ const PremiumPreloader = ({ onComplete }) => {
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 2.5, ease: luxuryEase }}
-            className="absolute inset-10 border border-[#b13896]/10 pointer-events-none rounded-[40px]"
+            className="absolute inset-10 border border-[#b13896]/20 pointer-events-none rounded-[40px]"
           />
 
           {/* Central Brand Reveal */}
@@ -75,7 +75,8 @@ const PremiumPreloader = ({ onComplete }) => {
                 <img
                   src="/img/Tuka-Logo.svg"
                   alt="Tuka"
-                  className="h-24 sm:h-32 w-auto object-contain brightness-0 opacity-100"
+                  className="h-24 sm:h-32 w-auto object-contain style={{ filter: 'brightness(0) invert(1)' }}"
+                  style={{ filter: 'brightness(0) invert(1)' }}
                 />
               </motion.div>
             </div>
