@@ -19,7 +19,7 @@ const Breadcrumb = ({
   ]
 }) => {
   return (
-    <div className="relative w-full min-h-[280px] md:min-h-[340px] overflow-hidden flex items-center justify-center bg-[#161114]">
+    <div className="relative w-full min-h-[180px] md:min-h-[220px] overflow-hidden flex items-center justify-center bg-[#161114]">
       {/* Background Image with Slow Zoom & Ambient Overlay */}
       <motion.div 
         initial={{ scale: 1.12, opacity: 0 }}
@@ -45,17 +45,17 @@ const Breadcrumb = ({
       </motion.div>
 
       {/* Compact Hero Content Box */}
-      <div className="relative z-10 max-w-[1440px] w-full mx-auto px-6 lg:px-12 pt-20 md:pt-24 pb-8 md:pb-10 text-center text-white flex flex-col items-center">
+      <div className="relative z-10 max-w-[1440px] w-full mx-auto px-6 lg:px-12 pt-16 md:pt-20 pb-5 md:pb-6 text-center text-white flex flex-col items-center">
         
         {/* Top Glassmorphic Badge Pill */}
         {badgeText && (
           <motion.div 
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-[10px] font-bold tracking-[0.2em] text-[#f4cfeb] uppercase mb-3 shadow-lg"
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-[9px] font-bold tracking-[0.2em] text-[#f4cfeb] uppercase mb-2 shadow-sm"
           >
-            <Sparkles size={11} className="text-[#f4cfeb] animate-pulse" />
+            <Sparkles size={10} className="text-[#f4cfeb] animate-pulse" />
             <span>{badgeText}</span>
           </motion.div>
         )}
@@ -63,22 +63,22 @@ const Breadcrumb = ({
         {/* Compact Breadcrumb Navigation */}
         {links && links.length > 0 && (
           <motion.div 
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-bold tracking-[0.18em] uppercase mb-3"
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="flex flex-wrap items-center justify-center gap-1 text-[10px] font-bold tracking-[0.16em] uppercase mb-2"
           >
             {links.map((link, index) => (
               <React.Fragment key={index}>
-                {index > 0 && <ChevronRight size={11} className="text-white/30" />}
+                {index > 0 && <ChevronRight size={10} className="text-white/30" />}
                 {link.active ? (
-                  <span className="px-2.5 py-0.5 rounded-full bg-white/15 text-white border border-white/20 backdrop-blur-sm">
+                  <span className="px-2 py-0.5 rounded-full bg-white/15 text-white border border-white/20 backdrop-blur-sm">
                     {link.name}
                   </span>
                 ) : (
                   <Link 
                     to={link.href} 
-                    className="px-2.5 py-0.5 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-all duration-300"
+                    className="px-2 py-0.5 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-all duration-300"
                   >
                     {link.name}
                   </Link>
@@ -88,44 +88,44 @@ const Breadcrumb = ({
           </motion.div>
         )}
 
-        {/* Title */}
+        {/* Compact Title */}
         <motion.h1 
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.8 }}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-light leading-tight tracking-tight px-4 max-w-3xl"
+          transition={{ delay: 0.18, duration: 0.6 }}
+          className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-serif font-medium leading-snug tracking-tight px-4 max-w-2xl text-white"
         >
           {title}
         </motion.h1>
         
-        {/* Subtitle */}
+        {/* Compact Subtitle */}
         {subtitle && (
           <motion.p 
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.8 }}
-            className="text-xs sm:text-sm md:text-base font-serif italic max-w-xl mx-auto text-white/75 font-light mt-2 leading-relaxed"
+            transition={{ delay: 0.25, duration: 0.6 }}
+            className="text-[11px] sm:text-xs max-w-md mx-auto text-white/75 font-sans font-light mt-1.5 leading-relaxed"
           >
-            "{subtitle}"
+            {subtitle}
           </motion.p>
         )}
 
         {/* Compact Craft Stats Pills */}
         {stats && stats.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45, duration: 0.6 }}
-            className="mt-5 flex flex-wrap justify-center gap-2 md:gap-4"
+            transition={{ delay: 0.32, duration: 0.5 }}
+            className="mt-3 flex flex-wrap justify-center gap-2"
           >
             {stats.map((item, idx) => {
               const Icon = item.icon;
               return (
                 <div 
                   key={idx} 
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[10px] font-semibold text-white/70 tracking-wider"
+                  className="flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[9px] font-semibold text-white/70 tracking-wider"
                 >
-                  <Icon size={11} style={{ color: MAGENTA }} />
+                  <Icon size={10} style={{ color: MAGENTA }} />
                   <span>{item.label}</span>
                 </div>
               );
@@ -136,7 +136,7 @@ const Breadcrumb = ({
       </div>
 
       {/* Decorative Compact Arc */}
-      <div className="absolute bottom-0 left-0 w-full h-10 bg-[#FDFAF5] rounded-t-[50%] md:rounded-t-[100%] scale-x-125 translate-y-5" />
+      <div className="absolute bottom-0 left-0 w-full h-6 bg-[#FDFAF5] rounded-t-[50%] md:rounded-t-[100%] scale-x-125 translate-y-3" />
     </div>
   );
 };
