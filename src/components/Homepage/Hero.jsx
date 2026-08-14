@@ -13,32 +13,11 @@ const DARK    = '#161114';
 const SANS    = "'Plus Jakarta Sans', 'Inter', sans-serif";
 const SERIF   = "'Playfair Display', Georgia, serif";
 
-const whyChooseFeatures = [
-  {
-    icon: <Sparkles className="w-4 h-4" strokeWidth={1.5} />,
-    title: "Pure Handloom",
-    description: "Directly sourced from traditional weavers"
-  },
-  {
-    icon: <Gem className="w-4 h-4" strokeWidth={1.5} />,
-    title: "Heirloom Quality",
-    description: "Hand-finished with meticulous precision"
-  },
-  {
-    icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />,
-    title: "Authentic Materials",
-    description: "100% genuine silks & pure metallic fibers"
-  },
-  {
-    icon: <Heart className="w-4 h-4" strokeWidth={1.5} />,
-    title: "Fair Trade Pride",
-    description: "Guaranteed fair wages & ethical trade"
-  },
-  {
-    icon: <Award className="w-4 h-4" strokeWidth={1.5} />,
-    title: "Premier Trust",
-    description: "Rated 4.9★ by 10,000+ fashion lovers"
-  }
+const usps = [
+  '🪷 Handloom Sarees',
+  '✿ Ethnic Kurtis',
+  '🌸 Bridal Collections',
+  '✦ Premium Fabrics',
 ];
 
 const Hero = () => {
@@ -167,27 +146,86 @@ const Hero = () => {
             Authentic handloom sarees in Cotton, Khadi, Linen, Silk & exquisite tailored blouses directly from master weaver looms.
           </motion.p>
 
-          {/* Action CTAs */}
+          {/* CTAs */}
           <motion.div
-            className="flex flex-wrap items-center gap-3 pt-2"
-            initial={{ opacity: 0, y: 15 }}
+            className="flex items-center gap-3.5 flex-wrap mb-6"
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
           >
             <Link
-              to="/shop?cat=Saree#products"
-              className="px-6 py-3.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-[0.25em] text-white transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
-              style={{ background: 'linear-gradient(135deg, #b13896 0%, #762263 100%)', boxShadow: '0 8px 25px rgba(177,56,150,0.4)' }}
+              to="/shop?cat=all#products"
+              className="group relative inline-flex items-center justify-center overflow-hidden text-white rounded-full transition-all duration-500 hover:shadow-[0_0_30px_rgba(177,56,150,0.6)] active:scale-95"
+              style={{
+                background: MAGENTA,
+                padding: '13px 30px',
+                fontSize: '10px',
+                letterSpacing: '0.24em',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                fontFamily: SANS,
+              }}
             >
-              Explore Collection
-              <Sparkles size={14} className="text-amber-200" />
+              <span className="relative z-10 transition-transform duration-500 group-hover:scale-105">Shop Collection</span>
+              <span
+                className="absolute left-[-100%] top-0 h-full w-full transition-transform duration-700 group-hover:translate-x-[200%]"
+                style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)' }}
+              />
             </Link>
+
             <Link
-              to="/about?ref=hero#story"
-              className="px-6 py-3.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-[0.25em] text-white/90 transition-all hover:bg-white/10 hover:text-white border border-white/30 backdrop-blur-md active:scale-95 cursor-pointer"
+              to="/shop?cat=new-arrivals#products"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white/95 hover:text-white transition-all duration-300 hover:bg-white/15"
+              style={{
+                border: '1px solid rgba(255,255,255,0.25)',
+                backdropFilter: 'blur(10px)',
+                fontSize: '10px',
+                letterSpacing: '0.22em',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                fontFamily: SANS,
+              }}
             >
-              Our Story
+              <span>New Arrivals</span>
             </Link>
+          </motion.div>
+
+          {/* Compact Category Quick Explore Pills */}
+          <motion.div
+            className="flex flex-wrap items-center gap-2"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.48 }}
+          >
+            <span className="text-[10px] tracking-[0.2em] text-white/45 uppercase font-medium mr-1" style={{ fontFamily: SANS }}>
+              Quick Explore:
+            </span>
+            {['Cotton', 'Khadi', 'Silk', 'Linen', 'Blouse'].map((cat) => (
+              <Link
+                key={cat}
+                to={`/shop?cat=${cat.toLowerCase().replace(/ /g, '-')}&source=hero#products`}
+                className="px-3.5 py-1 rounded-full text-[10px] tracking-wider font-semibold transition-all duration-300"
+                style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid rgba(255,255,255,0.18)',
+                  color: 'rgba(255,255,255,0.85)',
+                  backdropFilter: 'blur(8px)',
+                  fontFamily: SANS,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = MAGENTA;
+                  e.currentTarget.style.color = '#fff';
+                  e.currentTarget.style.background = `${MAGENTA}90`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)';
+                  e.currentTarget.style.color = 'rgba(255,255,255,0.85)';
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+                }}
+              >
+                {cat}
+              </Link>
+            ))}
           </motion.div>
         </div>
       </motion.div>
