@@ -20,6 +20,34 @@ const usps = [
   '✦ Premium Fabrics',
 ];
 
+const whyChooseFeatures = [
+  {
+    icon: <Sparkles className="w-4 h-4" strokeWidth={1.5} />,
+    title: "Pure Handloom",
+    description: "Directly sourced from traditional weavers across India."
+  },
+  {
+    icon: <Gem className="w-4 h-4" strokeWidth={1.5} />,
+    title: "Heirloom Quality",
+    description: "Hand-finished with precision to survive generations."
+  },
+  {
+    icon: <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />,
+    title: "Authentic Materials",
+    description: "100% genuine silks, linens, and metallic fibers."
+  },
+  {
+    icon: <Heart className="w-4 h-4" strokeWidth={1.5} />,
+    title: "Fair Trade Pride",
+    description: "Guaranteed fair wages and ethical community trade."
+  },
+  {
+    icon: <Award className="w-4 h-4" strokeWidth={1.5} />,
+    title: "Premier Trust",
+    description: "Rated 4.9★ by over 10k+ luxury fashion lovers."
+  }
+];
+
 const Hero = () => {
   const videoRef   = useRef(null);
   const sectionRef = useRef(null);
@@ -147,86 +175,9 @@ const Hero = () => {
           </motion.p>
 
           {/* CTAs */}
-          <motion.div
-            className="flex items-center gap-3.5 flex-wrap mb-6"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <Link
-              to="/shop?cat=all#products"
-              className="group relative inline-flex items-center justify-center overflow-hidden text-white rounded-full transition-all duration-500 hover:shadow-[0_0_30px_rgba(177,56,150,0.6)] active:scale-95"
-              style={{
-                background: MAGENTA,
-                padding: '13px 30px',
-                fontSize: '10px',
-                letterSpacing: '0.24em',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                fontFamily: SANS,
-              }}
-            >
-              <span className="relative z-10 transition-transform duration-500 group-hover:scale-105">Shop Collection</span>
-              <span
-                className="absolute left-[-100%] top-0 h-full w-full transition-transform duration-700 group-hover:translate-x-[200%]"
-                style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)' }}
-              />
-            </Link>
-
-            <Link
-              to="/shop?cat=new-arrivals#products"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white/95 hover:text-white transition-all duration-300 hover:bg-white/15"
-              style={{
-                border: '1px solid rgba(255,255,255,0.25)',
-                backdropFilter: 'blur(10px)',
-                fontSize: '10px',
-                letterSpacing: '0.22em',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                fontFamily: SANS,
-              }}
-            >
-              <span>New Arrivals</span>
-            </Link>
-          </motion.div>
-
+         
           {/* Compact Category Quick Explore Pills */}
-          <motion.div
-            className="flex flex-wrap items-center gap-2"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.48 }}
-          >
-            <span className="text-[10px] tracking-[0.2em] text-white/45 uppercase font-medium mr-1" style={{ fontFamily: SANS }}>
-              Quick Explore:
-            </span>
-            {['Cotton', 'Khadi', 'Silk', 'Linen', 'Blouse'].map((cat) => (
-              <Link
-                key={cat}
-                to={`/shop?cat=${cat.toLowerCase().replace(/ /g, '-')}&source=hero#products`}
-                className="px-3.5 py-1 rounded-full text-[10px] tracking-wider font-semibold transition-all duration-300"
-                style={{
-                  background: 'rgba(255,255,255,0.08)',
-                  border: '1px solid rgba(255,255,255,0.18)',
-                  color: 'rgba(255,255,255,0.85)',
-                  backdropFilter: 'blur(8px)',
-                  fontFamily: SANS,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = MAGENTA;
-                  e.currentTarget.style.color = '#fff';
-                  e.currentTarget.style.background = `${MAGENTA}90`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)';
-                  e.currentTarget.style.color = 'rgba(255,255,255,0.85)';
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
-                }}
-              >
-                {cat}
-              </Link>
-            ))}
-          </motion.div>
+         
         </div>
       </motion.div>
 
