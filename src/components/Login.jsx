@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./useAuth";
-import { Mail, Lock, ArrowRight, Eye, EyeOff, AlertCircle, Gem } from "lucide-react";
+import { Mail, Lock, ArrowRight, Eye, EyeOff, AlertCircle, ArrowLeft, Sparkles, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 
-const SERIF = "'Cormorant Garamond', Georgia, serif";
-const GOLD = '#b13896';
-const CRIMSON = '#b13896';
+const SERIF = "'Playfair Display', 'Cormorant Garamond', Georgia, serif";
+const SANS = "'Plus Jakarta Sans', 'Inter', sans-serif";
+const MAGENTA = '#b13896';
 
 const Login = () => {
   const { login } = useAuth();
@@ -32,171 +32,206 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex selection:bg-[#b13896] selection:text-white">
+    <div className="min-h-screen flex selection:bg-[#b13896] selection:text-white bg-[#161114]">
 
-      {/* Left Panel — Brand Visual */}
-      <div className="hidden lg:flex lg:w-[48%] relative overflow-hidden items-end" style={{ background: '#161114' }}>
-        <img
-          src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=1200"
-          alt="Luxury Jewelry"
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
+      {/* Left Panel — Pure Luxury Brand Visual (No Images) */}
+      <div className="hidden lg:flex lg:w-[48%] relative overflow-hidden items-center justify-center p-12 bg-[#161114] border-r border-white/10">
+        
+        {/* Ambient Radial Glowing Spotlight */}
+        <div 
+          className="absolute inset-0 opacity-30 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(circle at 40% 30%, ${MAGENTA} 0%, transparent 65%)`,
+            filter: 'blur(50px)'
+          }}
         />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(10,7,5,0.95) 0%, rgba(10,7,5,0.3) 50%, rgba(10,7,5,0.6) 100%)' }} />
+        <div className="absolute top-0 inset-x-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(177,56,150,0.5), transparent)' }} />
+        <div className="absolute bottom-0 inset-x-0 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)' }} />
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 p-14 pb-16 w-full"
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-10 max-w-lg"
         >
-          <Link to="/" className="inline-block mb-12">
-            <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-10" style={{ filter: 'invert(1)' }} />
+          {/* 100% Bright White Tuka Logo */}
+          <Link to="/" className="inline-block mb-10 group">
+            <img 
+              src="/img/Tuka-Logo.svg" 
+              alt="Tuka" 
+              className="h-11 brightness-0 invert transition-transform group-hover:scale-105 duration-300" 
+            />
           </Link>
 
+          
+
           <h2
-            className="text-5xl xl:text-6xl font-light text-white mb-6 leading-[1.1]"
+            className="text-4xl xl:text-5xl font-light text-white mb-6 leading-[1.15] tracking-tight"
             style={{ fontFamily: SERIF }}
           >
-            Welcome to the<br />
-            <em className="not-italic font-semibold" style={{ color: GOLD }}>House of Tuka</em>
+            Welcome Back to<br />
+            <span className="font-semibold text-[#f4cfeb]">Handloom Heritage</span>
           </h2>
 
-          <p className="text-white/45 text-[15px] max-w-md leading-relaxed mb-10" style={{ fontFamily: SERIF }}>
-            Where every handloom saree tells a story of timeless craftsmanship, woven by master weavers across Bengal.
+          <p className="text-white/60 text-sm max-w-md leading-relaxed mb-10 font-sans font-light">
+            Log in to manage your orders, access saved favorites in your wishlist, and explore authentic Bengal handwoven collections.
           </p>
 
-          <div className="flex items-center gap-8">
-            {['Handcrafted', 'Certified', 'Worldwide'].map((tag, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full" style={{ background: GOLD }} />
-                <span className="text-[14px] tracking-[0.25em] uppercase font-bold text-white/40">{tag}</span>
+          <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-8 font-sans">
+            {[
+              { title: '100% Authentic', desc: 'Direct from Bengal shuttle weavers' },
+              { title: 'Priority Access', desc: 'New drop notifications & previews' },
+              { title: 'Express Dispatch', desc: 'Free Pan-India insured delivery' },
+              { title: 'Dedicated Support', desc: 'WhatsApp fabric concierge service' },
+            ].map((feat, i) => (
+              <div key={i} className="space-y-1">
+                <div className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-wider">
+                  <ShieldCheck size={14} className="text-[#f4cfeb]" />
+                  <span>{feat.title}</span>
+                </div>
+                <p className="text-[11px] text-white/40">{feat.desc}</p>
               </div>
             ))}
           </div>
+
         </motion.div>
       </div>
 
       {/* Right Panel — Login Form */}
-      <div className="flex-1 flex flex-col justify-center items-center bg-[#FDFAF5] px-6 sm:px-12 py-12 relative">
-        {/* Subtle decorative element */}
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#b13896]/[0.03] rounded-full blur-[100px] pointer-events-none" />
+      <div className="flex-1 flex flex-col justify-between bg-[#FDFBF9] px-6 sm:px-12 py-8 sm:py-12 relative min-h-screen">
+        
+        {/* Top Control Bar with Back to Home Button */}
+        <div className="w-full flex items-center justify-between z-20">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-[#b13896] transition-all duration-300 shadow-md group cursor-pointer"
+            style={{ fontFamily: SANS }}
+          >
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+            <span>Back to Home</span>
+          </Link>
 
-        {/* Mobile logo */}
-        <Link to="/" className="lg:hidden mb-10">
-          <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-9" style={{ filter: 'brightness(0) invert(1)' }} />
-        </Link>
+          {/* Mobile White Logo (on dark badge) */}
+          <Link to="/" className="lg:hidden p-2 rounded-xl bg-[#161114]">
+            <img src="/img/Tuka-Logo.svg" alt="Tuka" className="h-7 brightness-0 invert" />
+          </Link>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full max-w-[420px] relative z-10"
-        >
-          {/* Header */}
-          <div className="mb-10">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="w-8 h-[1px]" style={{ background: CRIMSON }} />
-              <span className="text-[14px] tracking-[0.35em] font-bold uppercase" style={{ color: '#4a3f44' }}>Welcome Back</span>
+        {/* Center Form Box */}
+        <div className="w-full max-w-[420px] mx-auto my-auto py-8 relative z-10 font-sans">
+          
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* Header */}
+            <div className="mb-8">
+            
+              <h1
+                className="text-3xl sm:text-4xl font-light text-[#161114] mb-2"
+                style={{ fontFamily: SERIF }}
+              >
+                Sign In to Your Account
+              </h1>
+              <p className="text-xs text-slate-500 font-sans font-normal">
+                Enter your registered email and password below.
+              </p>
             </div>
-            <h1
-              className="text-4xl md:text-5xl font-light text-[#161114] mb-3"
-              style={{ fontFamily: SERIF }}
-            >
-              Sign <span className="italic" style={{ color: CRIMSON }}>In</span>
-            </h1>
-            <p className="text-[14px] text-[#4a3f44]" style={{ fontFamily: SERIF }}>
-              Access your account and curated collections.
+
+            {/* Error Banner */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-700 text-xs font-sans"
+              >
+                <AlertCircle size={16} className="shrink-0 text-red-500" />
+                <span>{error}</span>
+              </motion.div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-5 font-sans">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-900 ml-1">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#b13896] transition-colors" size={18} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#b13896] outline-none transition-all text-xs text-slate-900 placeholder:text-slate-400 shadow-sm"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center px-1">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-900">Password</label>
+                  <button type="button" className="text-xs font-bold text-[#b13896] hover:underline uppercase tracking-wider">Forgot?</button>
+                </div>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#b13896] transition-colors" size={18} />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-12 pr-12 py-3.5 bg-white border border-slate-200 rounded-xl focus:border-[#b13896] outline-none transition-all text-xs text-slate-900 placeholder:text-slate-400 shadow-sm"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#b13896] transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 rounded-xl text-white font-bold text-xs tracking-[0.25em] uppercase transition-all duration-300 flex items-center justify-center gap-3 bg-[#161114] hover:bg-[#b13896] shadow-lg cursor-pointer font-sans"
+              >
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <span>Sign In</span>
+                    <ArrowRight size={16} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 my-8">
+              <div className="flex-1 h-px bg-slate-200" />
+              <span className="text-[10px] tracking-widest uppercase font-bold text-slate-400">or</span>
+              <div className="flex-1 h-px bg-slate-200" />
+            </div>
+
+            {/* Sign Up Link */}
+            <p className="text-center text-xs text-slate-600 font-sans">
+              New to House of Tuka?{" "}
+              <Link to="/signup" className="text-[#b13896] font-bold hover:underline">
+                Create an account
+              </Link>
             </p>
-          </div>
+          </motion.div>
 
-          {/* Error */}
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-center gap-3 text-red-600 text-[13px]"
-            >
-              <AlertCircle size={16} />
-              {error}
-            </motion.div>
-          )}
+        </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-[14px] font-bold uppercase tracking-[0.2em] text-[#161114] ml-1">Email Address</label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#4a3f44]/30 group-focus-within:text-[#b13896] transition-colors" size={16} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full pl-12 pr-4 py-4 bg-white border border-[#e5d5df]/50 rounded-xl focus:border-[#b13896] outline-none transition-all text-[14px] text-[#161114] placeholder:text-[#4a3f44]/30"
-                  required
-                />
-              </div>
-            </div>
+        {/* Footer info */}
+        <div className="w-full text-center text-[11px] text-slate-400 font-sans z-10">
+          © {new Date().getFullYear()} House of Tuka. Authentic Bengal Handlooms.
+        </div>
 
-            <div className="space-y-2">
-              <div className="flex justify-between items-center px-1">
-                <label className="text-[14px] font-bold uppercase tracking-[0.2em] text-[#161114]">Password</label>
-                <button type="button" className="text-[14px] font-bold text-[#b13896]/60 hover:text-[#b13896] transition-colors uppercase tracking-wider">Forgot?</button>
-              </div>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#4a3f44]/30 group-focus-within:text-[#b13896] transition-colors" size={16} />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-12 pr-12 py-4 bg-white border border-[#e5d5df]/50 rounded-xl focus:border-[#b13896] outline-none transition-all text-[14px] text-[#161114] placeholder:text-[#4a3f44]/30"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#4a3f44]/40 hover:text-[#b13896] transition-colors"
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="group w-full py-4 rounded-xl text-white font-bold text-[14px] tracking-[0.3em] uppercase transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 mt-3 shadow-lg"
-              style={{ background: '#161114' }}
-              onMouseEnter={(e) => e.currentTarget.style.background = CRIMSON}
-              onMouseLeave={(e) => e.currentTarget.style.background = '#161114'}
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  Sign In
-                  <ArrowRight size={16} strokeWidth={2} className="group-hover:translate-x-1 transition-transform duration-300" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="flex items-center gap-4 my-8">
-            <div className="flex-1 h-px bg-[#e5d5df]/40" />
-            <span className="text-[14px] tracking-[0.2em] uppercase font-bold text-[#4a3f44]/40">or</span>
-            <div className="flex-1 h-px bg-[#e5d5df]/40" />
-          </div>
-
-          {/* Sign Up Link */}
-          <p className="text-center text-[13px] text-[#4a3f44]" style={{ fontFamily: SERIF }}>
-            New to Tuka?{" "}
-            <Link to="/signup" className="text-[#b13896] font-semibold hover:text-[#161114] transition-colors border-b border-[#b13896]/20 hover:border-[#161114] pb-px">
-              Create an account
-            </Link>
-          </p>
-        </motion.div>
       </div>
     </div>
   );
