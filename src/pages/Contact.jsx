@@ -1,219 +1,306 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ChevronDown, Instagram, Send, Clock, MessageCircle, Globe, Award } from 'lucide-react';
+import { Mail, Phone, MapPin, MessageCircle, Clock, Send, ChevronDown, Sparkles, ShieldCheck, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Breadcrumb from '../components/Breadcrumb';
 
+const MAGENTA = '#b13896';
+const DARK = '#161114';
+const SANS = "'Plus Jakarta Sans', 'Inter', sans-serif";
+const SERIF = "'Playfair Display', Georgia, serif";
+
 const Contact = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: 'General Inquiry', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: 'General Inquiry', message: '' });
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
 
-    const textMsg = `Hello Tuka Team,\n\nName: ${formData.name}\nEmail: ${formData.email}\nInquiry Type: ${formData.subject}\nMessage: ${formData.message}`;
+    const textMsg = `Hello Tuka Studio,\n\nName: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nInquiry: ${formData.subject}\nMessage: ${formData.message}`;
     const whatsappUrl = `https://wa.me/916265998887?text=${encodeURIComponent(textMsg)}`;
     
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
     setTimeout(() => setSubmitted(false), 3000);
   };
 
-  const fadeUp = {
-    initial: { opacity: 0, y: 40 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 1, ease: [0.19, 1, 0.22, 1] }
-  };
-
   const breadcrumbLinks = [
-    { name: 'Home', href: '/?ref=contact#hero' },
-    { name: 'Contact', href: '/contact?ref=breadcrumb#reach-us', active: true }
+    { name: 'Home', href: '/' },
+    { name: 'Contact Us', active: true }
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDFAF5] font-sans text-[#161114] overflow-hidden">
+    <div className="min-h-screen bg-[#FDFBF9] text-[#161114]">
       
-      {/* Premium Breadcrumb */}
+      {/* Centered Premium Page Hero Header */}
       <Breadcrumb 
-        title="Get in Touch"
-        subtitle="We'd love to hear from you. Reach out for weave inquiries, custom tailoring, or order support."
-        bgImage="https://images.unsplash.com/photo-1594913785162-e6785311bc51?auto=format&fit=crop&q=80&w=1600"
+        title="Contact Us"
+        subtitle="We'd love to hear from you. Reach out for weave consultations, custom blouse measurements, or order tracking."
         links={breadcrumbLinks}
       />
 
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-16 py-16 md:py-24">
+      <div className="max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 py-12 lg:py-20">
         
-        {/* Contact Info Grid - Luxury Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16 md:mb-24">
-          {[
-            { 
-              icon: Mail, 
-              label: "Email ", 
-              value: "hello@tuka.in",
-              sub: "Response within 2 hours"
-            },
-            { 
-              icon: Phone, 
-              label: "Call or WhatsApp", 
-              value: "+91 62659 98887",
-              sub: "Mon-Sat, 9:30am - 8:30pm IST"
-            },
-            { 
-              icon: MapPin, 
-              label: "Studio Location", 
-              value: "Bengal Weaving Hub, India",
-              sub: "Handcrafted in the heart of Bengal"
-            }
-          ].map((item, i) => (
-            <motion.div 
-              key={i}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: i * 0.1 }}
-              className="bg-white rounded-[32px] p-8 border border-[#e5d5df]/40 hover:border-[#b13896]/50 hover:shadow-2xl transition-all duration-500 group text-center"
-            >
-              <div className="w-14 h-14 rounded-full bg-[#F8F4EF] flex items-center justify-center mb-6 mx-auto group-hover:bg-[#b13896] group-hover:text-white transition-all duration-500 text-[#b13896]">
-                <item.icon size={22} strokeWidth={1.5} />
-              </div>
-              <p className="text-[12px] tracking-[0.3em] font-bold uppercase text-[#b13896] mb-2">{item.label}</p>
-              <p className="text-xl md:text-2xl font-serif text-[#161114] mb-2">{item.value}</p>
-              <p className="text-[13px] text-[#4a3f44] font-light">{item.sub}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Form + Sidebar Split */}
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           
-          {/* Contact Form - Simple & Premium */}
+          {/* Left Column: Direct Concierge & Studio Info */}
           <motion.div 
-            {...fadeUp}
-            className="lg:col-span-7"
-          >
-            <div className="bg-white rounded-[36px] p-8 md:p-12 border border-[#e5d5df]/40 shadow-sm relative overflow-hidden">
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-2">
-                  <MessageCircle size={18} className="text-[#25D366]" />
-                  <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#25D366]">Direct WhatsApp </span>
-                </div>
-                <h2 className="text-3xl md:text-4xl font-serif text-[#161114] mb-3">Send a Message</h2>
-                <p className="text-[14px] text-[#4a3f44] mb-8 font-light leading-relaxed">
-                  Fill in your details below. Your message will format instantly and open in WhatsApp for immediate response.
-                </p>
-                
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#161114]">Full Name</label>
-                      <input 
-                        type="text" 
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full bg-[#F8F4EF]/60 border border-[#e5d5df]/60 rounded-2xl px-4 py-3 text.sm text-[#161114] outline-none focus:border-[#b13896] focus:bg-white transition-all" 
-                        placeholder="e.g. Ananya Sharma" 
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#161114]">Email Address</label>
-                      <input 
-                        type="email" 
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="w-full bg-[#F8F4EF]/60 border border-[#e5d5df]/60 rounded-2xl px-4 py-3 text-sm text-[#161114] outline-none focus:border-[#b13896] focus:bg-white transition-all" 
-                        placeholder="ananya@example.com" 
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#161114]">Inquiry Category</label>
-                    <div className="relative">
-                      <select 
-                        value={formData.subject}
-                        onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                        className="w-full bg-[#F8F4EF]/60 border border-[#e5d5df]/60 rounded-2xl px-4 py-3 text-sm text-[#161114] outline-none focus:border-[#b13896] focus:bg-white transition-all appearance-none cursor-pointer"
-                      >
-                        <option>Saree Inquiry & Weave Consultation</option>
-                        <option>Custom Blouse Tailoring</option>
-                        <option>Order Tracking & Support</option>
-                        <option>Boutique & Bulk Orders</option>
-                        <option>General Inquiry</option>
-                      </select>
-                      <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#4a3f44] pointer-events-none" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#161114]">Your Message</label>
-                    <textarea 
-                      rows="4" 
-                      required
-                      value={formData.message}
-                      onChange={(e) => setFormData({...formData, message: e.target.value})}
-                      className="w-full bg-[#F8F4EF]/60 border border-[#e5d5df]/60 rounded-2xl p-4 text-sm text-[#161114] outline-none focus:border-[#b13896] focus:bg-white transition-all resize-none" 
-                      placeholder="Specify saree motifs, color preferences, or order ID..."
-                    />
-                  </div>
-                  
-                  <button 
-                    type="submit"
-                    className="w-full py-4 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs uppercase tracking-[0.2em] transition-all shadow-lg shadow-[#25D366]/30 flex items-center justify-center gap-3 cursor-pointer"
-                  >
-                    <MessageCircle size={18} />
-                    {submitted ? 'Opening WhatsApp…' : 'Send via WhatsApp (+91 62659 98887)'}
-                  </button>
-                </form>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Sidebar - Concierge & Support */}
-          <motion.div 
-            {...fadeUp}
-            transition={{ ...fadeUp.transition, delay: 0.2 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
             className="lg:col-span-5 space-y-6"
           >
-            {/* Direct WhatsApp Chat Box */}
-            <div className="bg-[#161114] rounded-[36px] p-8 text-white relative overflow-hidden">
-               <div className="w-12 h-12 rounded-2xl bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center text-[#25D366] mb-6">
-                 <MessageCircle size={24} />
-               </div>
-               <h3 className="text-2xl font-serif mb-2">Direct Studio Concierge</h3>
-               <p className="text-[13.5px] text-white/70 mb-6 font-light leading-relaxed">
-                 Need urgent blouse measurements guidance or real fabric video clips? Tap below to chat directly with our studio master weavers.
-               </p>
-               <a 
-                 href="https://wa.me/916265998887?text=Hello%20Tuka,%20I%20need%20assistance%20with%20a%20saree%20order."
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full bg-white text-[#161114] font-bold text-xs uppercase tracking-widest hover:bg-[#25D366] hover:text-white transition-all cursor-pointer"
-               >
-                 Chat on +91 62659 98887
-                 <Send size={14} />
-               </a>
+            {/* Direct Studio Info Card */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
+              
+              <div>
+                <span className="text-[10px] font-bold tracking-[0.25em] text-[#b13896] uppercase block mb-1" style={{ fontFamily: SANS }}>
+                  STUDIO CONCIERGE
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-light text-[#161114]" style={{ fontFamily: SERIF }}>
+                  We are here to assist you
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 font-light mt-1.5 leading-relaxed" style={{ fontFamily: SANS }}>
+                  Have questions about fabric texture, saree drapes, or custom blouses? Connect directly with our studio team.
+                </p>
+              </div>
+
+              <div className="space-y-4 pt-2 border-t border-slate-100 font-sans">
+                
+                {/* Phone / WhatsApp */}
+                <div className="flex items-start gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#b13896]/30 transition-all">
+                  <div className="p-2.5 rounded-xl bg-[#b13896]/10 text-[#b13896] shrink-0 mt-0.5">
+                    <Phone size={18} strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" style={{ fontFamily: SANS }}>
+                      Call or WhatsApp
+                    </span>
+                    <a 
+                      href="https://wa.me/916265998887" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-base font-semibold text-slate-900 font-sans tracking-normal hover:text-[#b13896] transition-colors block"
+                    >
+                      +91 62659 98887
+                    </a>
+                    <span className="text-[11px] text-slate-500 font-normal" style={{ fontFamily: SANS }}>
+                      Mon – Sat, 9:30 AM – 8:30 PM IST
+                    </span>
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="flex items-start gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#b13896]/30 transition-all">
+                  <div className="p-2.5 rounded-xl bg-[#b13896]/10 text-[#b13896] shrink-0 mt-0.5">
+                    <Mail size={18} strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" style={{ fontFamily: SANS }}>
+                      Email Support
+                    </span>
+                    <a 
+                      href="mailto:hello@tuka.in" 
+                      className="text-base font-semibold text-slate-900 font-sans hover:text-[#b13896] transition-colors block"
+                    >
+                      hello@tuka.in
+                    </a>
+                    <span className="text-[11px] text-slate-500 font-normal" style={{ fontFamily: SANS }}>
+                      Response within 2 business hours
+                    </span>
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className="flex items-start gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#b13896]/30 transition-all">
+                  <div className="p-2.5 rounded-xl bg-[#b13896]/10 text-[#b13896] shrink-0 mt-0.5">
+                    <MapPin size={18} strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" style={{ fontFamily: SANS }}>
+                      Studio Location
+                    </span>
+                    <p className="text-sm font-semibold text-slate-900 font-sans leading-snug">
+                      Bengal Handloom Weaving Hub
+                    </p>
+                    <span className="text-[11px] text-slate-500 font-normal" style={{ fontFamily: SANS }}>
+                      Hooghly & Kolkata, West Bengal, India
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
 
-            {/* Concierge Hours */}
-            <div className="bg-white rounded-[32px] p-8 border border-[#e5d5df]/40 space-y-4">
-              <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-                <Clock size={18} className="text-[#b13896]" />
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#161114]">Studio Hours</h3>
+            {/* Direct WhatsApp Instant Chat Banner */}
+            <div className="bg-[#161114] rounded-3xl p-6 sm:p-7 text-white relative overflow-hidden shadow-md">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 rounded-xl bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center text-[#25D366]">
+                  <MessageCircle size={20} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#25D366]" style={{ fontFamily: SANS }}>
+                    INSTANT ASSISTANCE
+                  </span>
+                  <h3 className="text-base font-medium text-white" style={{ fontFamily: SERIF }}>
+                    Need Real Fabric Video Clips?
+                  </h3>
+                </div>
               </div>
-              <div className="space-y-3 font-sans text-xs">
-                {[
-                  { day: 'Mon — Sat', time: '09:30 AM — 08:30 PM IST' },
-                  { day: 'Sunday', time: '11:00 AM — 06:00 PM IST' },
-                ].map((item, i) => (
-                  <div key={i} className="flex justify-between items-center text-slate-600">
-                    <span>{item.day}</span>
-                    <span className="font-semibold text-slate-900">{item.time}</span>
-                  </div>
-                ))}
+              <p className="text-xs text-white/70 font-light mb-4 leading-relaxed" style={{ fontFamily: SANS }}>
+                Tap below to chat directly with our studio team on WhatsApp for custom drape advice, weave verification, or order updates.
+              </p>
+              <a 
+                href="https://wa.me/916265998887?text=Hello%20Tuka%20Studio,%20I%20need%20assistance%20with%20a%20saree%20order."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 px-5 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md font-sans"
+              >
+                <MessageCircle size={16} />
+                <span>Chat on WhatsApp (+91 62659 98887)</span>
+              </a>
+            </div>
+
+            {/* Heritage Badges */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 flex items-center gap-3">
+                <Award size={20} className="text-[#b13896] shrink-0" />
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900" style={{ fontFamily: SANS }}>100% Handloom</h4>
+                  <p className="text-[10px] text-slate-500" style={{ fontFamily: SANS }}>Pure Natural Yarns</p>
+                </div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-white border border-slate-200/80 flex items-center gap-3">
+                <ShieldCheck size={20} className="text-[#b13896] shrink-0" />
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900" style={{ fontFamily: SANS }}>GI Certified</h4>
+                  <p className="text-[10px] text-slate-500" style={{ fontFamily: SANS }}>Authentic Origin</p>
+                </div>
               </div>
             </div>
+
           </motion.div>
+
+          {/* Right Column: High Visibility Contact & Inquiry Form */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="lg:col-span-7"
+          >
+            <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-sm relative">
+              
+              <div className="mb-6 pb-4 border-b border-slate-100">
+                <span className="text-[10px] font-bold tracking-[0.25em] text-[#b13896] uppercase block mb-1" style={{ fontFamily: SANS }}>
+                  SEND A MESSAGE
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-light text-[#161114]" style={{ fontFamily: SERIF }}>
+                  Inquire or Custom Order
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 font-light mt-1" style={{ fontFamily: SANS }}>
+                  Fill out the form below. Your message formats automatically for instant response via WhatsApp.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                
+                {/* Full Name & Phone */}
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 block" style={{ fontFamily: SANS }}>
+                      Full Name *
+                    </label>
+                    <input 
+                      type="text" 
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 outline-none focus:border-[#b13896] focus:bg-white transition-all font-sans" 
+                      placeholder="e.g. Ananya Sharma" 
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 block" style={{ fontFamily: SANS }}>
+                      Phone / WhatsApp *
+                    </label>
+                    <input 
+                      type="tel" 
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 outline-none focus:border-[#b13896] focus:bg-white transition-all font-sans tracking-normal" 
+                      placeholder="+91 98765 43210" 
+                    />
+                  </div>
+                </div>
+
+                {/* Email Address */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 block" style={{ fontFamily: SANS }}>
+                    Email Address *
+                  </label>
+                  <input 
+                    type="email" 
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 outline-none focus:border-[#b13896] focus:bg-white transition-all font-sans" 
+                    placeholder="ananya@example.com" 
+                  />
+                </div>
+
+                {/* Inquiry Category */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 block" style={{ fontFamily: SANS }}>
+                    Inquiry Category
+                  </label>
+                  <div className="relative">
+                    <select 
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-900 outline-none focus:border-[#b13896] focus:bg-white transition-all appearance-none cursor-pointer font-sans"
+                    >
+                      <option>Saree Inquiry & Weave Consultation</option>
+                      <option>Custom Blouse Tailoring</option>
+                      <option>Order Tracking & Support</option>
+                      <option>Boutique & Bulk Orders</option>
+                      <option>General Inquiry</option>
+                    </select>
+                    <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 block" style={{ fontFamily: SANS }}>
+                    Your Message *
+                  </label>
+                  <textarea 
+                    rows="4" 
+                    required
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs sm:text-sm text-slate-900 outline-none focus:border-[#b13896] focus:bg-white transition-all resize-none font-sans" 
+                    placeholder="Specify saree weave preferences, custom blouse measurements, or order questions..."
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <button 
+                  type="submit"
+                  className="w-full py-3.5 sm:py-4 rounded-xl bg-[#b13896] hover:bg-[#962e7f] text-white font-bold text-xs uppercase tracking-[0.2em] transition-all shadow-md shadow-[#b13896]/20 flex items-center justify-center gap-2 cursor-pointer"
+                  style={{ fontFamily: SANS }}
+                >
+                  <Send size={15} />
+                  <span>{submitted ? 'Opening WhatsApp...' : 'Send Message via WhatsApp'}</span>
+                </button>
+
+              </form>
+
+            </div>
+          </motion.div>
+
         </div>
       </div>
     </div>

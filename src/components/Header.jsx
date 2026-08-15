@@ -51,14 +51,14 @@ const LuxuryHeader = () => {
     });
 
     const unsubCats = onSnapshot(collection(db, 'categories'), (snap) => {
-      setDbCategories(snap.docs.map((doc) => doc.data().name).filter(Boolean));
+      setDbCategories(
+        snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      );
     });
 
     const unsubSubs = onSnapshot(collection(db, 'subcategories'), (snap) => {
       setDbSubcategories(
-        snap.docs
-          .map((doc) => doc.data().name)
-          .filter(Boolean)
+        snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
       );
     });
 
@@ -84,8 +84,52 @@ const LuxuryHeader = () => {
 
   /* ─ Dynamic Nav Data derived from Uploaded Products & Categories ───── */
   const navLinks = useMemo(() => {
-    // Saree subcategories list dynamically merged with uploaded products
-    const sareeSubcategories = [
+    const categoryMap = new Map();
+
+    const addCat = (name) => {
+      if (!name || typeof name !== 'string') return;
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      const key = trimmed.toLowerCase();
+      if (!categoryMap.has(key)) {
+        categoryMap.set(key, trimmed);
+      }
+    };
+
+    // Standard baseline categories
+    const defaultCats = [
+      'Saree',
+      'Boutique Collection',
+    ];
+    defaultCats.forEach(addCat);
+
+    // Categories uploaded in Firebase 'categories' collection
+    dbCategories.forEach((c) => {
+      if (c.name && c.status !== 'Inactive') addCat(c.name);
+    });
+
+    // Categories from uploaded products
+    dbProducts.forEach((p) => {
+      if (p.category) addCat(p.category);
+    });
+
+    // Categories from uploaded subcategories
+    dbSubcategories.forEach((s) => {
+      if (s.category) addCat(s.category);
+    });
+
+    const categoriesList = Array.from(categoryMap.values()).filter(
+      (cat) => cat.toLowerCase() !== 'handloom saree' && cat.toLowerCase() !== 'designer blouse'
+    );
+
+    const categoryPromoImages = {
+      'handloom saree': 'https://images.unsplash.com/photo-1610030470298-40e1eaccf77d?auto=format&fit=crop&q=80&w=800',
+      'designer blouse': 'https://images.unsplash.com/photo-1583390389001-8c9ac72a65f4?auto=format&fit=crop&q=80&w=800',
+      'saree': 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80&w=800',
+      'boutique collection': 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80&w=800',
+    };
+
+    const defaultSareeSubcategories = [
       'Dhaniakhali Saree',
       'Begumpuri Saree',
       'Shantipuri Saree',
@@ -102,67 +146,86 @@ const LuxuryHeader = () => {
       'Phulia Saree',
     ];
 
-    // Merge subcategories from uploaded products
-    dbProducts.forEach((p) => {
-      if (p.subCategory && !sareeSubcategories.includes(p.subCategory)) {
-        sareeSubcategories.push(p.subCategory);
-      }
-    });
-
-    dbSubcategories.forEach((s) => {
-      if (s && !sareeSubcategories.includes(s)) {
-        sareeSubcategories.push(s);
-      }
-    });
-
-    return [
-      {
-        name: 'Handloom Saree',
-        href: '/shop?cat=Handloom%20Saree#products',
-        megaMenu: {
-          sections: [
-            {
-              title: 'Featured Weaves & Saree Subcategories',
-              icon: '🪷',
-              items: sareeSubcategories.slice(0, 7),
-            },
-            {
-              title: 'Traditional & Silk Weaves',
-              icon: '✧',
-              items: sareeSubcategories.slice(7, 14),
-            },
-            {
-              title: 'Bengal Handloom Craft',
-              icon: '✿',
-              items: sareeSubcategories.slice(14),
-            },
-          ].filter((sec) => sec.items.length > 0),
-          image: 'https://images.unsplash.com/photo-1610030470298-40e1eaccf77d?auto=format&fit=crop&q=80&w=800',
-          tagline: 'TERRITORY OF WEAVES',
-          heading: 'Bengal Handloom Heritage',
-        },
-      },
-      {
-        name: 'Designer Blouse',
-        href: '/shop?cat=Designer%20Blouse#products',
-        megaMenu: {
-          sections: [
-            {
-              title: 'Blouse Subcategories',
-              icon: '◇',
-              items: ['Cotton Blouse', 'Silk Blouse', 'Printed Blouse', 'Khadi Blouse'],
-            },
-          ],
-          image: 'https://images.unsplash.com/photo-1583390389001-8c9ac72a65f4?auto=format&fit=crop&q=80&w=800',
-          tagline: 'HANDCRAFTED ACCENTS',
-          heading: 'Tailored Blouses',
-        },
-      },
-      { name: 'Saree', href: '/shop?cat=Saree#products' },
-      { name: 'Boutique Collection', href: '/shop?cat=Boutique%20Collection#products' },
-      { name: 'Our Story', href: '/about?ref=header#story' },
-      { name: 'Contact us', href: '/contact?ref=header#reach-us' },
+    const defaultBlouseSubcategories = [
+      'Cotton Blouse',
+      'Silk Blouse',
+      'Printed Blouse',
+      'Khadi Blouse',
     ];
+
+    const links = categoriesList.map((catName) => {
+      const catKey = catName.toLowerCase();
+      const subMap = new Set();
+
+      if (catKey.includes('saree')) {
+        defaultSareeSubcategories.forEach((s) => subMap.add(s));
+      } else if (catKey.includes('blouse')) {
+        defaultBlouseSubcategories.forEach((s) => subMap.add(s));
+      }
+
+      // Merge subcategories from Firebase 'subcategories' collection
+      dbSubcategories.forEach((s) => {
+        if (s.name && s.status !== 'Inactive') {
+          const subCatParent = (s.category || '').toLowerCase();
+          if (
+            subCatParent === catKey ||
+            (subCatParent === '' && catKey.includes('saree')) ||
+            (subCatParent === 'saree' && catKey.includes('saree'))
+          ) {
+            subMap.add(s.name);
+          }
+        }
+      });
+
+      // Merge subcategories from uploaded products
+      dbProducts.forEach((p) => {
+        if (p.subCategory) {
+          const prodCat = (p.category || '').toLowerCase();
+          if (
+            prodCat === catKey ||
+            (!prodCat && catKey.includes('saree'))
+          ) {
+            subMap.add(p.subCategory);
+          }
+        }
+      });
+
+      const subList = Array.from(subMap);
+
+      const sections = [];
+      if (subList.length > 0) {
+        const chunkSize = Math.max(4, Math.ceil(subList.length / 3));
+        for (let i = 0; i < subList.length; i += chunkSize) {
+          const chunk = subList.slice(i, i + chunkSize);
+          const icons = ['🪷', '✧', '✿', '◇', '✦'];
+          const icon = icons[sections.length % icons.length];
+          sections.push({
+            title: sections.length === 0 ? `${catName} Subcategories` : `More ${catName} Weaves`,
+            icon,
+            items: chunk,
+          });
+        }
+      }
+
+      const img = categoryPromoImages[catKey] || 'https://images.unsplash.com/photo-1610030470298-40e1eaccf77d?auto=format&fit=crop&q=80&w=800';
+
+      return {
+        name: catName,
+        href: `/shop?cat=${encodeURIComponent(catName)}#products`,
+        subcategories: subList,
+        megaMenu: sections.length > 0 ? {
+          sections,
+          image: img,
+          tagline: 'TERRITORY OF WEAVES',
+          heading: catName,
+        } : null,
+      };
+    });
+
+    links.push({ name: 'Our Story', href: '/about?ref=header#story' });
+    links.push({ name: 'Contact us', href: '/contact?ref=header#reach-us' });
+
+    return links;
   }, [dbProducts, dbCategories, dbSubcategories]);
 
   /* ─── Derived header style ────────────────────────── */
@@ -398,20 +461,21 @@ const LuxuryHeader = () => {
 
               {/* Quick Category Tag Pills */}
               <div className="px-6 pt-4 pb-2 flex gap-2 overflow-x-auto scrollbar-hide border-b border-white/5">
-                {[
-                  { name: 'All Sarees', cat: 'handloom-saree' },
-                  { name: 'Blouses', cat: 'designer-blouse' },
-                  { name: 'Silk', cat: 'silk' },
-                  { name: 'Khadi', cat: 'khadi' },
-                  { name: 'Linen', cat: 'linen' },
-                ].map((tag, idx) => (
+                <Link
+                  to="/shop#products"
+                  onClick={() => setMobileOpen(false)}
+                  className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#b13896] text-white whitespace-nowrap"
+                >
+                  All
+                </Link>
+                {navLinks.filter((l) => l.megaMenu).map((catLink, idx) => (
                   <Link
                     key={idx}
-                    to={`/shop?cat=${tag.cat}#products`}
+                    to={catLink.href}
                     onClick={() => setMobileOpen(false)}
                     className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/10 text-white/80 hover:bg-[#b13896] hover:text-white transition-all whitespace-nowrap"
                   >
-                    {tag.name}
+                    {catLink.name}
                   </Link>
                 ))}
               </div>
@@ -475,7 +539,7 @@ const LuxuryHeader = () => {
                                     {section.items.map((item, i) => (
                                       <li key={i}>
                                         <Link
-                                          to={`/shop?q=${encodeURIComponent(item)}#products`}
+                                          to={`/shop?cat=${encodeURIComponent(link.name)}&q=${encodeURIComponent(item)}#products`}
                                           onClick={() => setMobileOpen(false)}
                                           className="text-xs text-white/70 hover:text-white transition-colors block py-0.5"
                                           style={{ fontFamily: NAV_SANS }}

@@ -13,7 +13,7 @@ const FloatingWhatsApp = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-auto">
+    <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-5 z-[60] flex flex-col items-end pointer-events-auto">
       {/* Tooltip Popup */}
       <AnimatePresence>
         {showTooltip && (

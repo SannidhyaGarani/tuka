@@ -49,11 +49,7 @@ function Home() {
       {/* 11. Customer Love & Verified Buyer Reviews */}
       <TestimonialSection />
 
-      {/* 12. Client Spotlight & Instagram Gallery Wall */}
-      {/* <SocialGallery /> */}
-
-      {/* 13. Atelier Craft Newsletter Subscription */}
-      <NewsletterBar />
+    
     </div>
   );
 }

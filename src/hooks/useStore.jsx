@@ -61,8 +61,9 @@ export const StoreProvider = ({ children }) => {
       // Guest: Load from LocalStorage
       const loadLocal = () => {
         const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const localWish = JSON.parse(localStorage.getItem('wishlist') || '[]');
         setCartItems(localCart);
-        setWishlistItems([]);
+        setWishlistItems(localWish);
       };
       loadLocal();
       
@@ -202,30 +203,69 @@ export const StoreProvider = ({ children }) => {
   };
 
   const addToWishlist = async (product) => {
-    if (!user) {
-      navigate('/login');
-      return false;
-    }
+    if (!product || !product.id) return false;
+    const rawId = String(product.id).split('_')[0];
+    const isAlready = wishlistItems.some(i => String(i.id).split('_')[0] === rawId || i.id === product.id);
 
     const item = {
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: Number(product.price) || 0,
+      original_price: Number(product.original_price) || 0,
       image: product.image || product.images?.[0] || "",
       addedAt: new Date().toISOString()
     };
 
-    try {
-      await setDoc(doc(db, "users", user.uid, "wishlist", product.id), item);
+    if (user) {
+      try {
+        const wishRef = doc(db, "users", user.uid, "wishlist", product.id);
+        if (isAlready) {
+          await deleteDoc(wishRef);
+        } else {
+          await setDoc(wishRef, item);
+        }
+        return true;
+      } catch (error) {
+        console.error("Error toggling wishlist:", error);
+        return false;
+      }
+    } else {
+      let localWish = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      if (isAlready) {
+        localWish = localWish.filter(i => String(i.id).split('_')[0] !== rawId && i.id !== product.id);
+      } else {
+        localWish.push(item);
+      }
+      localStorage.setItem('wishlist', JSON.stringify(localWish));
+      setWishlistItems([...localWish]);
       return true;
-    } catch (error) {
-      console.error("Error adding to wishlist:", error);
-      return false;
+    }
+  };
+
+  const removeFromWishlist = async (productId) => {
+    if (user) {
+      try {
+        await deleteDoc(doc(db, "users", user.uid, "wishlist", productId));
+        return true;
+      } catch (error) {
+        console.error("Error removing from wishlist:", error);
+        return false;
+      }
+    } else {
+      let localWish = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      localWish = localWish.filter(i => i.id !== productId);
+      localStorage.setItem('wishlist', JSON.stringify(localWish));
+      setWishlistItems([...localWish]);
+      return true;
     }
   };
 
   const isInCart = (productId) => cartItems.some(i => i.id === productId);
-  const isInWishlist = (productId) => wishlistItems.some(i => i.id === productId);
+  const isInWishlist = (productId) => {
+    if (!productId) return false;
+    const rawId = String(productId).split('_')[0];
+    return wishlistItems.some(i => i.id === productId || String(i.id).split('_')[0] === rawId);
+  };
 
   const MAGENTA = '#b13896';
 
